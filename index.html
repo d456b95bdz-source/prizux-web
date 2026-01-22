@@ -6,7 +6,7 @@
 <title>PRIZUX</title>
 
 <style>
-/* ===== RESET ===== */
+/* ================= RESET ================= */
 * {
   margin: 0;
   padding: 0;
@@ -20,7 +20,7 @@ body {
   overflow: hidden;
 }
 
-/* ===== INTRO ===== */
+/* ================= INTRO ================= */
 #intro {
   position: fixed;
   inset: 0;
@@ -28,15 +28,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
-#logo {
+#logo-wrap {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Nodes */
 .node {
   width: 10px;
   height: 10px;
@@ -47,34 +51,50 @@ body {
   animation: nodeIn 0.4s forwards;
 }
 
-.node.n1 { top: 20px; left: 55px; animation-delay: 0.2s; }
-.node.n2 { top: 80px; left: 25px; animation-delay: 0.6s; }
-.node.n3 { top: 80px; right: 25px; animation-delay: 1s; }
+.node.n1 { top: 20px; left: 65px; animation-delay: 0.2s; }
+.node.n2 { top: 90px; left: 25px; animation-delay: 0.6s; }
+.node.n3 { top: 90px; right: 25px; animation-delay: 1s; }
 
-.line {
+/* Connections (Synapses) */
+.conn {
   position: absolute;
-  width: 2px;
-  height: 70px;
+  height: 2px;
   background: #fff;
-  top: 30px;
-  left: 59px;
-  transform-origin: top;
   opacity: 0;
-  animation: lineFlash 0.6s forwards;
+  transform-origin: left center;
+  animation: connectFlash 0.6s forwards;
+}
+
+/* n1 → n2 */
+.conn.c1 {
+  top: 30px;
+  left: 70px;
+  width: 80px;
+  transform: rotate(125deg);
   animation-delay: 1.4s;
 }
 
-#brand {
-  color: #fff;
-  font-size: 22px;
-  letter-spacing: 4px;
-  margin-top: 160px;
-  opacity: 0;
-  animation: brandIn 0.6s forwards;
-  animation-delay: 1.9s;
+/* n1 → n3 */
+.conn.c2 {
+  top: 30px;
+  left: 70px;
+  width: 80px;
+  transform: rotate(55deg);
+  animation-delay: 1.55s;
 }
 
-/* ===== MAIN ===== */
+/* Brand text */
+#brand {
+  margin-top: 140px;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: #fff;
+  opacity: 0;
+  animation: brandIn 0.6s forwards;
+  animation-delay: 2s;
+}
+
+/* ================= MAIN ================= */
 #main {
   display: none;
   min-height: 100vh;
@@ -88,23 +108,24 @@ header {
 
 .hero {
   margin-top: 120px;
-  max-width: 700px;
+  max-width: 720px;
 }
 
 .hero h1 {
-  font-size: 52px;
+  font-size: 54px;
   font-weight: 600;
   line-height: 1.1;
 }
 
 .hero p {
-  margin-top: 24px;
+  margin-top: 28px;
   font-size: 18px;
   color: #555;
 }
 
+/* Models section */
 .models {
-  margin-top: 120px;
+  margin-top: 140px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 32px;
@@ -113,25 +134,32 @@ header {
 .card {
   border: 1px solid #eee;
   padding: 32px;
-  border-radius: 16px;
+  border-radius: 18px;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.08);
 }
 
 .card h2 {
   font-size: 22px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .card p {
   font-size: 15px;
   color: #666;
+  line-height: 1.5;
 }
 
-/* ===== ANIMATIONS ===== */
+/* ================= ANIMATIONS ================= */
 @keyframes nodeIn {
   to { opacity: 1; }
 }
 
-@keyframes lineFlash {
+@keyframes connectFlash {
   0% { opacity: 0; }
   40% { opacity: 1; }
   100% { opacity: 0; }
@@ -140,33 +168,41 @@ header {
 @keyframes brandIn {
   to { opacity: 1; }
 }
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 42px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- INTRO -->
+<!-- ================= INTRO ================= -->
 <div id="intro">
-  <div id="logo">
+  <div id="logo-wrap">
     <div class="node n1"></div>
     <div class="node n2"></div>
     <div class="node n3"></div>
-    <div class="line"></div>
+
+    <div class="conn c1"></div>
+    <div class="conn c2"></div>
+
+    <div id="brand">PRIZUX</div>
   </div>
-  <div id="brand">PRIZUX</div>
 </div>
 
-<!-- MAIN -->
+<!-- ================= MAIN ================= -->
 <div id="main">
   <header>PRIZUX</header>
 
   <section class="hero">
-    <h1>
-      Probability, not promises.
-    </h1>
+    <h1>Probability,<br>not promises.</h1>
     <p>
-      PRIZUX is an AI-driven probability engine.<br />
-      It doesn’t tell you what to do.<br />
+      PRIZUX is an AI-driven probability engine.<br>
+      It doesn’t tell you what to do.<br>
       It shows you what may happen.
     </p>
   </section>
@@ -175,35 +211,43 @@ header {
     <div class="card">
       <h2>PRIZUX Core</h2>
       <p>
-        Probability-based market signals powered by AI-1.<br />
-        No forecasts. No certainty.
+        Probability-based market signals powered by AI-1.<br>
+        Calm. Quantified. Unbiased.
       </p>
     </div>
 
     <div class="card">
       <h2>Education Model</h2>
       <p>
-        Visualized decision paths and explainable signals.<br />
-        Understand why the model reacts.
+        Visualized decision paths and explainable signals.<br>
+        Learn how the AI reacts.
       </p>
     </div>
 
     <div class="card">
       <h2>Pro Model</h2>
       <p>
-        AI-1 + AI-2 combined reasoning system.<br />
-        Structured decision support.
+        AI-1 combined with AI-2 reasoning.<br>
+        Structured decision support for advanced users.
       </p>
     </div>
   </section>
 </div>
 
 <script>
+/* ===== INTRO END → MAIN ===== */
 setTimeout(() => {
   document.getElementById("intro").style.display = "none";
   document.getElementById("main").style.display = "block";
   document.body.style.overflow = "auto";
 }, 2600);
+
+/* Skip intro on tap/click */
+document.getElementById("intro").addEventListener("click", () => {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("main").style.display = "block";
+  document.body.style.overflow = "auto";
+});
 </script>
 
 </body>
