@@ -6,6 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+:root {
+  --primary: #4F46E5;
+  --accent-green: #16A34A;
+  --accent-blue: #2563EB;
+  --soft-bg: #F8FAFF;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: #fff;
@@ -25,10 +32,10 @@ p {
 .signal {
   margin-top: 40px;
   display: inline-block;
-  padding: 12px 20px;
+  padding: 12px 22px;
   border-radius: 999px;
-  background: rgba(22,163,74,.12);
-  color: #16a34a;
+  background: rgba(22,163,74,.15);
+  color: var(--accent-green);
   font-weight: 600;
 }
 
@@ -48,35 +55,58 @@ p {
 .section h2 {
   font-size: 40px;
   margin-bottom: 28px;
+  color: var(--primary);
 }
 
 /* ===== Highlight ===== */
 .highlight {
   margin-top: 60px;
-  padding: 36px 40px;
-  border-radius: 20px;
-  background: #f9fafb;
+  padding: 40px 44px;
+  border-radius: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(79,70,229,.08),
+    rgba(37,99,235,.06)
+  );
+  border: 1px solid rgba(79,70,229,.18);
+}
+
+.highlight strong {
+  color: var(--primary);
 }
 
 /* ===== SVG Visual ===== */
 .visual {
   margin-top: 80px;
-  max-width: 720px;
+  max-width: 760px;
+  background: var(--soft-bg);
+  padding: 32px;
+  border-radius: 24px;
+  border: 1px solid rgba(79,70,229,.15);
 }
+
 svg {
   width: 100%;
   height: auto;
 }
+
 .label {
   font-size: 12px;
   fill: #6b7280;
+}
+
+/* ===== Back ===== */
+.back {
+  text-decoration: none;
+  color: var(--primary);
+  font-weight: 500;
 }
 </style>
 </head>
 
 <body>
 
-<a href="/" style="text-decoration:none;color:#4F46E5;">← Back</a>
+<a href="/" class="back">← Back</a>
 
 <h1>PRIZUX Core</h1>
 
@@ -122,25 +152,39 @@ No charts. No complexity.
 
   <!-- ===== GENERATED SVG VISUAL ===== -->
   <div class="visual">
-    <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg">
-      <!-- Traditional -->
-      <polyline points="40,200 140,80 240,180 340,60"
-                fill="none" stroke="#9ca3af" stroke-width="2"/>
-      <text x="40" y="230" class="label">Traditional AI</text>
-      <text x="40" y="245" class="label">Exact price prediction</text>
+    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Traditional AI (noisy) -->
+      <polyline points="60,190 160,70 260,180 360,60"
+        fill="none"
+        stroke="#9CA3AF"
+        stroke-width="2"
+        stroke-dasharray="6 6"/>
+
+      <text x="60" y="220" class="label">Traditional AI</text>
+      <text x="60" y="238" class="label">Exact price prediction</text>
+
+      <!-- Noise points -->
+      <circle cx="140" cy="40" r="4" fill="#D1D5DB"/>
+      <circle cx="240" cy="50" r="4" fill="#D1D5DB"/>
+      <circle cx="320" cy="35" r="4" fill="#D1D5DB"/>
 
       <!-- PRIZUX -->
-      <polyline points="400,160 470,140 540,130 610,120"
-                fill="none" stroke="#4F46E5" stroke-width="3"/>
-      <text x="400" y="230" class="label">PRIZUX Core</text>
-      <text x="400" y="245" class="label">Probabilistic direction</text>
+      <polyline points="420,160 500,145 580,135 660,125"
+        fill="none"
+        stroke="url(#grad)"
+        stroke-width="4"/>
 
-      <!-- Noise -->
-      <g stroke="#d1d5db" stroke-width="1">
-        <line x1="100" y1="40" x2="120" y2="60"/>
-        <line x1="180" y1="30" x2="200" y2="55"/>
-        <line x1="260" y1="50" x2="280" y2="70"/>
-      </g>
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4F46E5"/>
+          <stop offset="100%" stop-color="#2563EB"/>
+        </linearGradient>
+      </defs>
+
+      <text x="420" y="220" class="label">PRIZUX Core</text>
+      <text x="420" y="238" class="label">Probabilistic direction</text>
+
     </svg>
   </div>
 
