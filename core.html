@@ -50,44 +50,7 @@ p {
   margin-bottom: 28px;
 }
 
-/* ===== Bar Chart ===== */
-.chart {
-  margin-top: 60px;
-  display: flex;
-  gap: 32px;
-  align-items: flex-end;
-  height: 240px;
-}
-
-.bar {
-  width: 120px;
-  background: #e5e7eb;
-  border-radius: 12px 12px 0 0;
-  position: relative;
-}
-
-.bar span {
-  position: absolute;
-  bottom: -34px;
-  width: 100%;
-  text-align: center;
-  font-size: 14px;
-  color: #555;
-}
-
-.bar::before {
-  content: attr(data-value);
-  position: absolute;
-  top: -32px;
-  width: 100%;
-  text-align: center;
-  font-weight: 600;
-}
-
-.bar.old { height: 120px; }
-.bar.new { height: 180px; background: #4F46E5; }
-
-/* ===== Highlight Box ===== */
+/* ===== Highlight ===== */
 .highlight {
   margin-top: 60px;
   padding: 36px 40px;
@@ -95,18 +58,18 @@ p {
   background: #f9fafb;
 }
 
-/* ===== Images ===== */
-.images {
+/* ===== SVG Visual ===== */
+.visual {
   margin-top: 80px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 28px;
+  max-width: 720px;
 }
-
-.images img {
+svg {
   width: 100%;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.12);
+  height: auto;
+}
+.label {
+  font-size: 12px;
+  fill: #6b7280;
 }
 </style>
 </head>
@@ -129,50 +92,69 @@ No charts. No complexity.
 
 <div class="signal">Example Signal · BUY</div>
 
-<!-- ===== NEW SECTION ===== -->
+<!-- ===== ADDITIONAL EXPLANATION ===== -->
 <section class="section" id="tech">
 
   <h2>The Decision without any noise.</h2>
 
   <p>
-  Financial price movements contain a significant amount of short-term noise.
-  PRIZUX Core is designed to suppress unstable fluctuations while preserving
-  structurally meaningful market signals.
+  Most conventional market A.I. systems attempt to predict the exact future
+  price of an asset. This approach assumes that price movement is a stable,
+  learnable target.
   </p>
 
   <p>
-  Historical price data has been accumulated continuously since late 1999,
-  providing sufficient depth across multiple market cycles.
+  In reality, price itself is the noisiest signal in the market.
+  Short-term randomness, external events, and micro-structure effects
+  severely degrade model reliability when exact values are treated as truth.
   </p>
-
-  <!-- ===== BAR CHART ===== -->
-  <div class="chart">
-    <div class="bar old" data-value="Baseline">
-      <span>Single-path Model</span>
-    </div>
-    <div class="bar new" data-value="+18.7%">
-      <span>PRIZUX Core (AI-1)</span>
-    </div>
-  </div>
 
   <div class="highlight">
     <p>
-    <strong>Why AI-1 is different</strong><br><br>
-    AI-1 evaluates probability across multiple time horizons (3, 7, 20 days)
-    simultaneously, instead of relying on a single directional prediction.
+    PRIZUX Core takes a fundamentally different approach.
     <br><br>
-    By combining convolutional pattern extraction with recurrent temporal
-    modeling, PRIZUX Core achieves more stable inference under volatile
-    conditions.
+    Instead of predicting a precise price, AI-1 evaluates probabilistic
+    tendencies across multiple time horizons simultaneously.
+    This allows the system to suppress unstable fluctuations and focus on
+    directional structure rather than numerical precision.
     </p>
   </div>
 
-  <!-- ===== IMAGES ===== -->
-  <div class="images">
-    <img src="https://images.unsplash.com/photo-1640161704729-cbe966a08476" alt="">
-    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="">
-    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b" alt="">
-    <img src="https://images.unsplash.com/photo-1581093588401-22d0e01f47c0" alt="">
+  <!-- ===== GENERATED SVG VISUAL ===== -->
+  <div class="visual">
+    <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Traditional -->
+      <polyline points="40,200 140,80 240,180 340,60"
+                fill="none" stroke="#9ca3af" stroke-width="2"/>
+      <text x="40" y="230" class="label">Traditional AI</text>
+      <text x="40" y="245" class="label">Exact price prediction</text>
+
+      <!-- PRIZUX -->
+      <polyline points="400,160 470,140 540,130 610,120"
+                fill="none" stroke="#4F46E5" stroke-width="3"/>
+      <text x="400" y="230" class="label">PRIZUX Core</text>
+      <text x="400" y="245" class="label">Probabilistic direction</text>
+
+      <!-- Noise -->
+      <g stroke="#d1d5db" stroke-width="1">
+        <line x1="100" y1="40" x2="120" y2="60"/>
+        <line x1="180" y1="30" x2="200" y2="55"/>
+        <line x1="260" y1="50" x2="280" y2="70"/>
+      </g>
+    </svg>
+  </div>
+
+  <p>
+  Historical data accumulation for AI-1 begins in early 2018,
+  covering multiple volatility regimes and market cycles.
+  </p>
+
+  <div class="highlight">
+    <p>
+    In internal validation, this probabilistic multi-horizon approach
+    demonstrated a <strong>18.7%</strong> improvement in signal consistency
+    compared to earlier single-path inference structures.
+    </p>
   </div>
 
 </section>
