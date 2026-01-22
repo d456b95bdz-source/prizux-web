@@ -13,9 +13,7 @@ body {
   padding: 80px 10%;
 }
 
-h1 {
-  font-size: 48px;
-}
+h1 { font-size: 48px; }
 
 p {
   margin-top: 20px;
@@ -40,9 +38,8 @@ p {
   max-width: 900px;
   opacity: 0;
   transform: translateY(60px);
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
-
 .section.visible {
   opacity: 1;
   transform: translateY(0);
@@ -53,11 +50,6 @@ p {
   margin-bottom: 24px;
 }
 
-.section p {
-  font-size: 19px;
-  line-height: 1.6;
-}
-
 .highlight {
   margin-top: 48px;
   padding: 28px 32px;
@@ -65,11 +57,11 @@ p {
   background: #f9fafb;
 }
 
-/* ===== Node System ===== */
+/* ===== Visualization ===== */
 .visual-wrapper {
-  margin-top: 100px;
+  margin-top: 90px;
   position: relative;
-  width: 700px;
+  width: 720px;
   height: 420px;
 }
 
@@ -77,31 +69,31 @@ p {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 60px;
+  width: 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.node-column.col0 { left: 0; }
-.node-column.col1 { left: 320px; }
-.node-column.col2 { left: 640px; }
+.col0 { left: 0; }
+.col1 { left: 340px; }
+.col2 { left: 680px; }
 
 .node {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
   background: #111;
+  border-radius: 50%;
   opacity: 0.25;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity .25s ease, transform .25s ease;
 }
 
 .node.active {
   opacity: 1;
-  transform: scale(1.35);
+  transform: scale(1.4);
 }
 
-/* SVG lines */
+/* ===== Lines ===== */
 svg {
   position: absolute;
   inset: 0;
@@ -109,10 +101,10 @@ svg {
 }
 
 line {
-  stroke: rgba(17,17,17,.12);
-  stroke-width: 1.5;
+  stroke: rgba(17,17,17,.15);
+  stroke-width: 1.4;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity .25s ease;
 }
 
 line.active {
@@ -170,22 +162,18 @@ No charts. No complexity.
 </section>
 
 <script>
-const section = document.getElementById("tech");
+const rows = 10;
+const cols = 3;
+const colX = [20, 360, 700];
+const rowY = Array.from({length: rows}, (_, i) => 20 + i * 40);
+
 const viz = document.getElementById("viz");
 const svg = document.getElementById("lines");
 
-const rows = 10;
-const cols = 3;
-const colX = [30, 350, 670];
-const rowY = [];
-
-for (let i = 0; i < rows; i++) {
-  rowY.push(20 + i * 40);
-}
-
-/* Create columns & nodes */
 const nodes = [];
+const connections = [];
 
+/* Nodes */
 for (let c = 0; c < cols; c++) {
   const col = document.createElement("div");
   col.className = `node-column col${c}`;
@@ -202,14 +190,12 @@ for (let c = 0; c < cols; c++) {
   viz.appendChild(col);
 }
 
-/* Create connections */
-const connections = [];
-
+/* Connections (diagonal + parallel) */
 for (let c = 0; c < cols - 1; c++) {
   for (let r = 0; r < rows; r++) {
-    for (let dr of [-1, 0, 1]) {
+    [-1, 0, 1].forEach(dr => {
       const rr = r + dr;
-      if (rr < 0 || rr >= rows) continue;
+      if (rr < 0 || rr >= rows) return;
 
       const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
       line.setAttribute("x1", colX[c]);
@@ -219,13 +205,13 @@ for (let c = 0; c < cols - 1; c++) {
       svg.appendChild(line);
 
       connections.push({ c, r, rr, line });
-    }
+    });
   }
 }
 
-/* Activate flow */
+/* Animation */
 let step = 0;
-function animate() {
+setInterval(() => {
   nodes.flat().forEach(n => n.classList.remove("active"));
   connections.forEach(o => o.line.classList.remove("active"));
 
@@ -234,22 +220,18 @@ function animate() {
   }
 
   connections.forEach(o => {
-    if (o.r === step || o.rr === step) {
+    if (o.r === step || o.rr === step || o.rr === step - 1 || o.rr === step + 1) {
       o.line.classList.add("active");
     }
   });
 
   step = (step + 1) % rows;
-}
+}, 300);
 
-setInterval(animate, 700);
-
-/* Reveal on scroll */
+/* Reveal */
 new IntersectionObserver(e => {
-  if (e[0].isIntersecting) {
-    section.classList.add("visible");
-  }
-}, { threshold: 0.2 }).observe(section);
+  if (e[0].isIntersecting) document.getElementById("tech").classList.add("visible");
+}, { threshold: 0.2 }).observe(document.getElementById("tech"));
 </script>
 
 </body>
