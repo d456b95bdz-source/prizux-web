@@ -37,7 +37,7 @@ body {
   height: 160px;
 }
 
-/* Nodes */
+/* ===== Nodes ===== */
 .node {
   width: 26px;
   height: 26px;
@@ -45,14 +45,14 @@ body {
   border-radius: 50%;
   position: absolute;
   opacity: 0;
-  animation: nodeIn 0.4s forwards;
+  animation: nodeIn 0.6s ease forwards;
 }
 
 .node.top    { top: 0; right: 0; animation-delay: 0.2s; }
 .node.bottom { bottom: 0; left: 70px; animation-delay: 0.4s; }
 .node.left   { top: 55px; left: 0; animation-delay: 0.6s; }
 
-/* Arms */
+/* ===== Arms ===== */
 .arm {
   position: absolute;
   height: 6px;
@@ -60,15 +60,16 @@ body {
   border-radius: 3px;
   transform-origin: left center;
   opacity: 0;
-  animation: armIn 0.3s forwards;
+  animation: armIn 0.5s ease forwards;
 }
 
+/* main fixed arms */
 .arm.main {
   width: 70px;
   top: 72px;
   left: 80px;
   transform: rotate(-60deg);
-  animation-delay: 0.7s;
+  animation-delay: 0.9s;
 }
 
 .arm.down {
@@ -76,31 +77,34 @@ body {
   top: 95px;
   left: 80px;
   transform: rotate(90deg);
-  animation-delay: 0.8s;
+  animation-delay: 1.05s;
 }
 
-/* Conditional arm (decision attempt) */
+/* ===== Conditional decision arm ===== */
 .arm.try {
   width: 45px;
   top: 78px;
   left: 35px;
+
   transform: scaleX(0);
   transform-origin: right center;
-  animation: tryConnect 0.4s ease forwards;
-  animation-delay: 1.2s;
+  opacity: 0;
+
+  animation: deliberateConnect 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  animation-delay: 1.6s;
 }
 
-/* Brand text */
+/* ===== Brand ===== */
 #brand {
   position: absolute;
   width: 100%;
   text-align: center;
-  top: 180px;
+  top: 185px;
   font-size: 22px;
   letter-spacing: 4px;
   opacity: 0;
-  animation: brandIn 0.6s forwards;
-  animation-delay: 1.9s;
+  animation: brandIn 0.7s ease forwards;
+  animation-delay: 2.5s;
 }
 
 /* ========== MAIN ========== */
@@ -132,7 +136,7 @@ header {
   color: #555;
 }
 
-/* Model cards */
+/* ===== Models ===== */
 .models {
   margin-top: 140px;
   display: grid;
@@ -172,10 +176,27 @@ header {
   to { opacity: 1; }
 }
 
-@keyframes tryConnect {
-  0%   { transform: scaleX(0); opacity: 0; }
-  40%  { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(0); opacity: 0; }
+/* 아니 코드 수준 */
+@keyframes deliberateConnect {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  30% {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+
+  65% {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
 }
 
 @keyframes brandIn {
@@ -196,12 +217,10 @@ header {
 <!-- ========== INTRO ========== -->
 <div id="intro">
   <div id="logo">
-    <!-- Nodes -->
     <div class="node top"></div>
     <div class="node bottom"></div>
     <div class="node left"></div>
 
-    <!-- Arms -->
     <div class="arm main"></div>
     <div class="arm down"></div>
     <div class="arm try"></div>
@@ -221,8 +240,8 @@ header {
     </h1>
     <p>
       PRIZUX is an AI inference system.<br>
-      It explores possible outcomes <br>
-      with infinite node connection.
+      It considers possibilities,<br>
+      with infinite Node Connection.
     </p>
   </section>
 
@@ -239,7 +258,7 @@ header {
       <h2>Education Model</h2>
       <p>
         Visualized reasoning paths.<br>
-        Understand how decisions form.
+        Learn how decisions form.
       </p>
     </div>
 
@@ -261,7 +280,7 @@ const endIntro = () => {
   document.body.style.overflow = "auto";
 };
 
-setTimeout(endIntro, 2600);
+setTimeout(endIntro, 3300);
 document.getElementById("intro").addEventListener("click", endIntro);
 </script>
 
