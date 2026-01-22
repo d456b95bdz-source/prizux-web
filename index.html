@@ -1,37 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>PRIZUX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      background: #0b0d12;
-      color: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .box {
-      text-align: center;
-    }
-    h1 {
-      font-size: 4rem;
-      letter-spacing: 0.15em;
-    }
-    p {
-      opacity: 0.7;
-      margin-top: 1rem;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PRIZUX</title>
+
+<style>
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: #fff;
+  color: #111;
+  overflow: hidden;
+}
+
+/* ===== INTRO ===== */
+#intro {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+#logo {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.node {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  opacity: 0;
+  animation: nodeIn 0.4s forwards;
+}
+
+.node.n1 { top: 20px; left: 55px; animation-delay: 0.2s; }
+.node.n2 { top: 80px; left: 25px; animation-delay: 0.6s; }
+.node.n3 { top: 80px; right: 25px; animation-delay: 1s; }
+
+.line {
+  position: absolute;
+  width: 2px;
+  height: 70px;
+  background: #fff;
+  top: 30px;
+  left: 59px;
+  transform-origin: top;
+  opacity: 0;
+  animation: lineFlash 0.6s forwards;
+  animation-delay: 1.4s;
+}
+
+#brand {
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-top: 160px;
+  opacity: 0;
+  animation: brandIn 0.6s forwards;
+  animation-delay: 1.9s;
+}
+
+/* ===== MAIN ===== */
+#main {
+  display: none;
+  min-height: 100vh;
+  padding: 80px 10%;
+}
+
+header {
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.hero {
+  margin-top: 120px;
+  max-width: 700px;
+}
+
+.hero h1 {
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.hero p {
+  margin-top: 24px;
+  font-size: 18px;
+  color: #555;
+}
+
+.models {
+  margin-top: 120px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+
+.card {
+  border: 1px solid #eee;
+  padding: 32px;
+  border-radius: 16px;
+}
+
+.card h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.card p {
+  font-size: 15px;
+  color: #666;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes nodeIn {
+  to { opacity: 1; }
+}
+
+@keyframes lineFlash {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes brandIn {
+  to { opacity: 1; }
+}
+</style>
 </head>
+
 <body>
-  <div class="box">
-    <h1>PRIZUX</h1>
-    <p>AI-driven market signal platform</p>
+
+<!-- INTRO -->
+<div id="intro">
+  <div id="logo">
+    <div class="node n1"></div>
+    <div class="node n2"></div>
+    <div class="node n3"></div>
+    <div class="line"></div>
   </div>
+  <div id="brand">PRIZUX</div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <header>PRIZUX</header>
+
+  <section class="hero">
+    <h1>
+      Probability, not promises.
+    </h1>
+    <p>
+      PRIZUX is an AI-driven probability engine.<br />
+      It doesn’t tell you what to do.<br />
+      It shows you what may happen.
+    </p>
+  </section>
+
+  <section class="models">
+    <div class="card">
+      <h2>PRIZUX Core</h2>
+      <p>
+        Probability-based market signals powered by AI-1.<br />
+        No forecasts. No certainty.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Education Model</h2>
+      <p>
+        Visualized decision paths and explainable signals.<br />
+        Understand why the model reacts.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Pro Model</h2>
+      <p>
+        AI-1 + AI-2 combined reasoning system.<br />
+        Structured decision support.
+      </p>
+    </div>
+  </section>
+</div>
+
+<script>
+setTimeout(() => {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("main").style.display = "block";
+  document.body.style.overflow = "auto";
+}, 2600);
+</script>
+
 </body>
 </html>
