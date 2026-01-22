@@ -14,11 +14,6 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-:root {
-  --accent: #4F46E5;
-  --accent-soft: rgba(79,70,229,0.08);
-}
-
 body {
   background: #fff;
   color: #111;
@@ -42,7 +37,7 @@ body {
   height: 160px;
 }
 
-/* Nodes */
+/* ===== Nodes ===== */
 .node {
   width: 26px;
   height: 26px;
@@ -57,7 +52,7 @@ body {
 .node.bottom { bottom: 0; left: 70px; animation-delay: 0.4s; }
 .node.left   { top: 55px; left: 0; animation-delay: 0.6s; }
 
-/* Arms */
+/* ===== Arms ===== */
 .arm {
   position: absolute;
   height: 6px;
@@ -84,20 +79,18 @@ body {
   animation-delay: 1.05s;
 }
 
-/* Decision arm */
 .arm.try {
   width: 45px;
   top: 78px;
   left: 35px;
-  background: var(--accent);
   transform: scaleX(0);
   transform-origin: right center;
   opacity: 0;
-  animation: deliberateConnect 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  animation: deliberateConnect 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: 1.6s;
 }
 
-/* Brand */
+/* ===== Brand ===== */
 #brand {
   position: absolute;
   width: 100%;
@@ -118,21 +111,10 @@ body {
 }
 
 header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   font-size: 20px;
   letter-spacing: 2px;
 }
 
-/* small logo dot */
-header::before {
-  content: "●";
-  color: var(--accent);
-  font-size: 14px;
-}
-
-/* Hero */
 .hero {
   margin-top: 120px;
   max-width: 720px;
@@ -144,17 +126,13 @@ header::before {
   line-height: 1.1;
 }
 
-.hero h1 span {
-  color: var(--accent);
-}
-
 .hero p {
   margin-top: 28px;
   font-size: 18px;
   color: #555;
 }
 
-/* Models */
+/* ===== Models ===== */
 .models {
   margin-top: 140px;
   display: grid;
@@ -166,37 +144,20 @@ header::before {
   border: 1px solid #eee;
   padding: 32px;
   border-radius: 18px;
-  background: #fff;
+  text-decoration: none;
+  color: inherit;
   transition: transform .25s ease, box-shadow .25s ease;
-  position: relative;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  border-radius: 18px 18px 0 0;
-}
-
-.card.core::before {
-  background: var(--accent);
-}
-
-.card.edu::before {
-  background: #16A34A;
-}
-
-.card.pro::before {
-  background: #111;
 }
 
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 32px rgba(0,0,0,.08);
 }
+
+/* subtle color accents */
+.card.core { border-top: 4px solid #4F46E5; }
+.card.edu  { border-top: 4px solid #16a34a; }
+.card.pro  { border-top: 4px solid #dc2626; }
 
 .card h2 {
   font-size: 22px;
@@ -209,19 +170,36 @@ header::before {
   line-height: 1.5;
 }
 
-/* Animations */
+/* tags */
+.tag {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: rgba(79,70,229,.12);
+  color: #4F46E5;
+}
+
+.tag.soon {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ========== ANIMATIONS ========== */
 @keyframes nodeIn { to { opacity: 1; } }
-@keyframes armIn { to { opacity: 1; } }
+@keyframes armIn  { to { opacity: 1; } }
 
 @keyframes deliberateConnect {
-  0% { transform: scaleX(0); opacity: 0; }
-  30% { transform: scaleX(1); opacity: .6; }
-  65% { transform: scaleX(1); opacity: .6; }
+  0%   { transform: scaleX(0); opacity: 0; }
+  30%  { transform: scaleX(1); opacity: 0.6; }
+  65%  { transform: scaleX(1); opacity: 0.6; }
   100% { transform: scaleX(0); opacity: 0; }
 }
 
 @keyframes brandIn { to { opacity: 1; } }
 
+/* ========== MOBILE ========== */
 @media (max-width: 768px) {
   .hero h1 { font-size: 42px; }
 }
@@ -230,67 +208,75 @@ header::before {
 
 <body>
 
+<!-- ========== INTRO ========== -->
 <div id="intro">
   <div id="logo">
     <div class="node top"></div>
     <div class="node bottom"></div>
     <div class="node left"></div>
+
     <div class="arm main"></div>
     <div class="arm down"></div>
     <div class="arm try"></div>
+
     <div id="brand">PRIZUX</div>
   </div>
 </div>
 
+<!-- ========== MAIN ========== -->
 <div id="main">
   <header>PRIZUX</header>
 
   <section class="hero">
-    <h1><span>Probability</span>,<br>not promises.</h1>
+    <h1>
+      Probability,<br>
+      not promises.
+    </h1>
     <p>
       PRIZUX is an AI inference system.<br>
-      It considers possibilities,<br>
-      with infinite node connection.
+      It evaluates possibilities, not predictions.
     </p>
   </section>
 
   <section class="models">
-    <div class="card core">
+    <a href="/core.html" class="card core">
       <h2>PRIZUX Core</h2>
       <p>
-        Clear buy, sell, or hold signals<br>
-        based on AI-driven probability.<br>
-        No noise. Just direction.
+        Clear probability-based signals.<br>
+        No noise. No charts.
       </p>
-    </div>
+      <span class="tag">LIVE</span>
+    </a>
 
-    <div class="card edu">
+    <a href="/education.html" class="card edu">
       <h2>Education Model</h2>
       <p>
-        Visualized reasoning paths.<br>
-        Learn how decisions form.
+        Visual reasoning paths.<br>
+        Understand how signals form.
       </p>
-    </div>
+      <span class="tag soon">COMING SOON</span>
+    </a>
 
-    <div class="card pro">
+    <a href="/pro.html" class="card pro">
       <h2>Pro Model</h2>
       <p>
-        AI-1 combined with AI-2 reasoning.<br>
-        Structured inference support.
+        Multi-layer inference system.<br>
+        Structured market context.
       </p>
-    </div>
+      <span class="tag soon">COMING SOON</span>
+    </a>
   </section>
 </div>
 
 <script>
 const endIntro = () => {
-  intro.style.display = "none";
-  main.style.display = "block";
+  document.getElementById("intro").remove();
+  document.getElementById("main").style.display = "block";
   document.body.style.overflow = "auto";
 };
 
 setTimeout(endIntro, 3300);
-intro.addEventListener("click", endIntro);
+document.addEventListener("click", endIntro, { once: true });
 </script>
 
 </body>
