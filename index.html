@@ -6,7 +6,7 @@
 <title>PRIZUX</title>
 
 <style>
-/* ================= RESET ================= */
+/* ========== RESET ========== */
 * {
   margin: 0;
   padding: 0;
@@ -20,81 +20,90 @@ body {
   overflow: hidden;
 }
 
-/* ================= INTRO ================= */
+/* ========== INTRO ========== */
 #intro {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
 }
 
-#logo-wrap {
+#logo {
   position: relative;
-  width: 140px;
-  height: 180px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 180px;
+  height: 160px;
 }
 
 /* Nodes */
 .node {
-  width: 10px;
-  height: 10px;
-  background: #fff;
+  width: 26px;
+  height: 26px;
+  background: #111;
   border-radius: 50%;
   position: absolute;
   opacity: 0;
   animation: nodeIn 0.4s forwards;
 }
 
-.node.n1 { top: 20px; left: 65px; animation-delay: 0.2s; }
-.node.n2 { top: 90px; left: 25px; animation-delay: 0.6s; }
-.node.n3 { top: 90px; right: 25px; animation-delay: 1s; }
+.node.top    { top: 0; right: 0; animation-delay: 0.2s; }
+.node.bottom { bottom: 0; left: 70px; animation-delay: 0.4s; }
+.node.left   { top: 55px; left: 0; animation-delay: 0.6s; }
 
-/* Connections (Synapses) */
-.conn {
+/* Arms */
+.arm {
   position: absolute;
-  height: 2px;
-  background: #fff;
-  opacity: 0;
+  height: 6px;
+  background: #111;
+  border-radius: 3px;
   transform-origin: left center;
-  animation: connectFlash 0.6s forwards;
+  opacity: 0;
+  animation: armIn 0.3s forwards;
 }
 
-/* n1 → n2 */
-.conn.c1 {
-  top: 30px;
-  left: 70px;
-  width: 80px;
-  transform: rotate(125deg);
-  animation-delay: 1.4s;
+.arm.main {
+  width: 70px;
+  top: 72px;
+  left: 80px;
+  transform: rotate(-60deg);
+  animation-delay: 0.7s;
 }
 
-/* n1 → n3 */
-.conn.c2 {
-  top: 30px;
-  left: 70px;
-  width: 80px;
-  transform: rotate(55deg);
-  animation-delay: 1.55s;
+.arm.down {
+  width: 60px;
+  top: 95px;
+  left: 80px;
+  transform: rotate(90deg);
+  animation-delay: 0.8s;
+}
+
+/* Conditional arm (decision attempt) */
+.arm.try {
+  width: 45px;
+  top: 78px;
+  left: 35px;
+  transform: scaleX(0);
+  transform-origin: right center;
+  animation: tryConnect 0.4s ease forwards;
+  animation-delay: 1.2s;
 }
 
 /* Brand text */
 #brand {
-  margin-top: 140px;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 180px;
   font-size: 22px;
   letter-spacing: 4px;
-  color: #fff;
   opacity: 0;
   animation: brandIn 0.6s forwards;
-  animation-delay: 2s;
+  animation-delay: 1.9s;
 }
 
-/* ================= MAIN ================= */
+/* ========== MAIN ========== */
 #main {
   display: none;
   min-height: 100vh;
@@ -123,7 +132,7 @@ header {
   color: #555;
 }
 
-/* Models section */
+/* Model cards */
 .models {
   margin-top: 140px;
   display: grid;
@@ -154,22 +163,26 @@ header {
   line-height: 1.5;
 }
 
-/* ================= ANIMATIONS ================= */
+/* ========== ANIMATIONS ========== */
 @keyframes nodeIn {
   to { opacity: 1; }
 }
 
-@keyframes connectFlash {
-  0% { opacity: 0; }
-  40% { opacity: 1; }
-  100% { opacity: 0; }
+@keyframes armIn {
+  to { opacity: 1; }
+}
+
+@keyframes tryConnect {
+  0%   { transform: scaleX(0); opacity: 0; }
+  40%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(0); opacity: 0; }
 }
 
 @keyframes brandIn {
   to { opacity: 1; }
 }
 
-/* ================= MOBILE ================= */
+/* ========== MOBILE ========== */
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 42px;
@@ -180,30 +193,36 @@ header {
 
 <body>
 
-<!-- ================= INTRO ================= -->
+<!-- ========== INTRO ========== -->
 <div id="intro">
-  <div id="logo-wrap">
-    <div class="node n1"></div>
-    <div class="node n2"></div>
-    <div class="node n3"></div>
+  <div id="logo">
+    <!-- Nodes -->
+    <div class="node top"></div>
+    <div class="node bottom"></div>
+    <div class="node left"></div>
 
-    <div class="conn c1"></div>
-    <div class="conn c2"></div>
+    <!-- Arms -->
+    <div class="arm main"></div>
+    <div class="arm down"></div>
+    <div class="arm try"></div>
 
     <div id="brand">PRIZUX</div>
   </div>
 </div>
 
-<!-- ================= MAIN ================= -->
+<!-- ========== MAIN ========== -->
 <div id="main">
   <header>PRIZUX</header>
 
   <section class="hero">
-    <h1>Probability,<br>not promises.</h1>
+    <h1>
+      Probability,<br>
+      not promises.
+    </h1>
     <p>
-      PRIZUX is an AI-driven probability engine.<br>
-      It doesn’t tell you what to do.<br>
-      It shows you what may happen.
+      PRIZUX is an AI inference system.<br>
+      It explores possible outcomes <br>
+      with infinite node connection.
     </p>
   </section>
 
@@ -211,16 +230,16 @@ header {
     <div class="card">
       <h2>PRIZUX Core</h2>
       <p>
-        Probability-based market signals powered by AI-1.<br>
-        Calm. Quantified. Unbiased.
+        Probability-based signals powered by AI-1.<br>
+        Calm. Quantified. Neutral.
       </p>
     </div>
 
     <div class="card">
       <h2>Education Model</h2>
       <p>
-        Visualized decision paths and explainable signals.<br>
-        Learn how the AI reacts.
+        Visualized reasoning paths.<br>
+        Understand how decisions form.
       </p>
     </div>
 
@@ -228,26 +247,22 @@ header {
       <h2>Pro Model</h2>
       <p>
         AI-1 combined with AI-2 reasoning.<br>
-        Structured decision support for advanced users.
+        Structured inference support.
       </p>
     </div>
   </section>
 </div>
 
 <script>
-/* ===== INTRO END → MAIN ===== */
-setTimeout(() => {
+/* ===== INTRO → MAIN ===== */
+const endIntro = () => {
   document.getElementById("intro").style.display = "none";
   document.getElementById("main").style.display = "block";
   document.body.style.overflow = "auto";
-}, 2600);
+};
 
-/* Skip intro on tap/click */
-document.getElementById("intro").addEventListener("click", () => {
-  document.getElementById("intro").style.display = "none";
-  document.getElementById("main").style.display = "block";
-  document.body.style.overflow = "auto";
-});
+setTimeout(endIntro, 2600);
+document.getElementById("intro").addEventListener("click", endIntro);
 </script>
 
 </body>
