@@ -19,7 +19,7 @@ p {
   margin-top: 20px;
   font-size: 18px;
   color: #555;
-  max-width: 720px;
+  max-width: 760px;
 }
 
 .signal {
@@ -32,13 +32,13 @@ p {
   font-weight: 600;
 }
 
-/* ===== Scroll Section ===== */
+/* ===== Section ===== */
 .section {
   margin-top: 160px;
-  max-width: 900px;
+  max-width: 980px;
   opacity: 0;
   transform: translateY(60px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity .8s ease, transform .8s ease;
 }
 .section.visible {
   opacity: 1;
@@ -47,68 +47,66 @@ p {
 
 .section h2 {
   font-size: 40px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
+/* ===== Bar Chart ===== */
+.chart {
+  margin-top: 60px;
+  display: flex;
+  gap: 32px;
+  align-items: flex-end;
+  height: 240px;
+}
+
+.bar {
+  width: 120px;
+  background: #e5e7eb;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+}
+
+.bar span {
+  position: absolute;
+  bottom: -34px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.bar::before {
+  content: attr(data-value);
+  position: absolute;
+  top: -32px;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+}
+
+.bar.old { height: 120px; }
+.bar.new { height: 180px; background: #4F46E5; }
+
+/* ===== Highlight Box ===== */
 .highlight {
-  margin-top: 48px;
-  padding: 28px 32px;
-  border-radius: 18px;
+  margin-top: 60px;
+  padding: 36px 40px;
+  border-radius: 20px;
   background: #f9fafb;
 }
 
-/* ===== Visualization ===== */
-.visual-wrapper {
-  margin-top: 90px;
-  position: relative;
-  width: 720px;
-  height: 420px;
+/* ===== Images ===== */
+.images {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
 }
 
-.node-column {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.col0 { left: 0; }
-.col1 { left: 340px; }
-.col2 { left: 680px; }
-
-.node {
-  width: 14px;
-  height: 14px;
-  background: #111;
-  border-radius: 50%;
-  opacity: 0.25;
-  transition: opacity .25s ease, transform .25s ease;
-}
-
-.node.active {
-  opacity: 1;
-  transform: scale(1.4);
-}
-
-/* ===== Lines ===== */
-svg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-line {
-  stroke: rgba(17,17,17,.15);
-  stroke-width: 1.4;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-
-line.active {
-  opacity: 1;
+.images img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.12);
 }
 </style>
 </head>
@@ -131,107 +129,59 @@ No charts. No complexity.
 
 <div class="signal">Example Signal · BUY</div>
 
+<!-- ===== NEW SECTION ===== -->
 <section class="section" id="tech">
+
   <h2>The Decision without any noise.</h2>
 
   <p>
   Financial price movements contain a significant amount of short-term noise.
-  PRIZUX Core applies <strong>Adaptive Node Suppression (ANS)</strong>,
-  a proprietary inference structure designed to attenuate price noise
-  that most strongly degrades AI decision quality.
+  PRIZUX Core is designed to suppress unstable fluctuations while preserving
+  structurally meaningful market signals.
   </p>
 
   <p>
-  By integrating multiple probabilistic elements across independent time
-  perspectives, PRIZUX Core reduces short-term distortion and focuses on
-  structurally meaningful movements.
+  Historical price data has been accumulated continuously since early 2018,
+  providing sufficient depth across multiple market cycles.
   </p>
+
+  <!-- ===== BAR CHART ===== -->
+  <div class="chart">
+    <div class="bar old" data-value="Baseline">
+      <span>Single-path Model</span>
+    </div>
+    <div class="bar new" data-value="+18.7%">
+      <span>PRIZUX Core (AI-1)</span>
+    </div>
+  </div>
 
   <div class="highlight">
     <p>
-    <strong>Performance Insight</strong><br>
-    In internal validation, ANS improved signal consistency by
-    <strong>18.7%</strong> compared to previous single-path inference models,
-    under identical market conditions.
+    <strong>Why AI-1 is different</strong><br><br>
+    AI-1 evaluates probability across multiple time horizons (3, 7, 20 days)
+    simultaneously, instead of relying on a single directional prediction.
+    <br><br>
+    By combining convolutional pattern extraction with recurrent temporal
+    modeling, PRIZUX Core achieves more stable inference under volatile
+    conditions.
     </p>
   </div>
 
-  <div class="visual-wrapper" id="viz">
-    <svg id="lines"></svg>
+  <!-- ===== IMAGES ===== -->
+  <div class="images">
+    <img src="https://images.unsplash.com/photo-1640161704729-cbe966a08476" alt="">
+    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="">
+    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b" alt="">
+    <img src="https://images.unsplash.com/photo-1581093588401-22d0e01f47c0" alt="">
   </div>
+
 </section>
 
 <script>
-const rows = 10;
-const cols = 3;
-const colX = [20, 360, 700];
-const rowY = Array.from({length: rows}, (_, i) => 20 + i * 40);
-
-const viz = document.getElementById("viz");
-const svg = document.getElementById("lines");
-
-const nodes = [];
-const connections = [];
-
-/* Nodes */
-for (let c = 0; c < cols; c++) {
-  const col = document.createElement("div");
-  col.className = `node-column col${c}`;
-  const colNodes = [];
-
-  for (let r = 0; r < rows; r++) {
-    const n = document.createElement("div");
-    n.className = "node";
-    col.appendChild(n);
-    colNodes.push(n);
-  }
-
-  nodes.push(colNodes);
-  viz.appendChild(col);
-}
-
-/* Connections (diagonal + parallel) */
-for (let c = 0; c < cols - 1; c++) {
-  for (let r = 0; r < rows; r++) {
-    [-1, 0, 1].forEach(dr => {
-      const rr = r + dr;
-      if (rr < 0 || rr >= rows) return;
-
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", colX[c]);
-      line.setAttribute("y1", rowY[r]);
-      line.setAttribute("x2", colX[c + 1]);
-      line.setAttribute("y2", rowY[rr]);
-      svg.appendChild(line);
-
-      connections.push({ c, r, rr, line });
-    });
-  }
-}
-
-/* Animation */
-let step = 0;
-setInterval(() => {
-  nodes.flat().forEach(n => n.classList.remove("active"));
-  connections.forEach(o => o.line.classList.remove("active"));
-
-  for (let c = 0; c < cols; c++) {
-    nodes[c][step].classList.add("active");
-  }
-
-  connections.forEach(o => {
-    if (o.r === step || o.rr === step || o.rr === step - 1 || o.rr === step + 1) {
-      o.line.classList.add("active");
-    }
-  });
-
-  step = (step + 1) % rows;
-}, 300);
-
-/* Reveal */
-new IntersectionObserver(e => {
-  if (e[0].isIntersecting) document.getElementById("tech").classList.add("visible");
-}, { threshold: 0.2 }).observe(document.getElementById("tech"));
+const section = document.getElementById("tech");
+new IntersectionObserver(e=>{
+  if(e[0].isIntersecting) section.classList.add("visible");
+},{threshold:0.2}).observe(section);
 </script>
 
 </body>
