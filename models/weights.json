@@ -1,8 +1,4 @@
 {
-  "trained": false,
-  "count": 0,
-  "mean_x": 0,
-  "mean_y": 0,
-  "var_x": 0,
-  "cov_xy": 0
+  "w": 0.0,
+  "b": 0.0
 }
