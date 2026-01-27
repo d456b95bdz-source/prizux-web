@@ -15,8 +15,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Global model instance
-model = DeepCoreModel(model_path="weights.json")
+# ⚠️ models/weights.json 을 명확히 지정
+model = DeepCoreModel(model_path="models/weights.json")
 
 # =========================
 # Schemas
@@ -36,9 +36,6 @@ class PredictData(BaseModel):
 
 @app.get("/")
 def root():
-    """
-    Health check & model status
-    """
     return {
         "service": "PRIZUX Deep Core",
         "status": "alive",
@@ -48,9 +45,6 @@ def root():
 
 @app.post("/api/train")
 def train(data: TrainData):
-    """
-    Train Deep Core model with (x, y) pairs
-    """
     try:
         model.train(data.x, data.y)
     except Exception as e:
@@ -66,9 +60,6 @@ def train(data: TrainData):
 
 @app.post("/api/predict")
 def predict(data: PredictData):
-    """
-    Predict y value from input x
-    """
     try:
         y = model.predict(data.x)
     except Exception as e:
@@ -82,7 +73,4 @@ def predict(data: PredictData):
 
 @app.get("/api/model")
 def model_info():
-    """
-    Introspection endpoint (for Education model)
-    """
     return model.parameters()
