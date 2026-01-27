@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>PRIZUX Deep Core — Relationship Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 60px 10% 140px;
+  background: #fff;
+  color: #111;
+}
+
+/* ===== HEADER ===== */
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+header a {
+  text-decoration: none;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 22px;
+  height: 22px;
+  background: #111;
+  border-radius: 6px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  margin-top: 120px;
+  max-width: 720px;
+}
+
+.hero h1 {
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.hero p {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ===== LAB ===== */
+.lab {
+  margin-top: 120px;
+  max-width: 720px;
+}
+
+.lab-title {
+  font-size: 20px;
+  margin-bottom: 24px;
+}
+
+/* ===== DATA ROW ===== */
+.data-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.data-row input {
+  width: 140px;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+}
+
+.data-row input:focus {
+  border-color: #4F46E5;
+}
+
+.arrow {
+  font-size: 18px;
+  color: #888;
+}
+
+/* ===== ADD BUTTON ===== */
+.add-btn {
+  margin-top: 12px;
+  background: none;
+  border: none;
+  color: #4F46E5;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.add-btn:hover {
+  text-decoration: underline;
+}
+
+/* ===== ACTION ===== */
+.action {
+  margin-top: 60px;
+}
+
+.action button {
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: 999px;
+  border: none;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+
+.action button:hover {
+  opacity: .9;
+}
+
+/* ===== NOTE ===== */
+.note {
+  margin-top: 120px;
+  font-size: 14px;
+  color: #777;
+  max-width: 720px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 40px 6% 120px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .data-row input {
+    width: 120px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="/deep-core.html">
+    <div class="logo"></div>
+    <span>PRIZUX</span>
+  </a>
+</header>
+
+<section class="hero">
+  <h1>
+    Relationship<br>
+    Lab
+  </h1>
+  <p>
+    Provide numerical pairs.<br>
+    The system learns their relationship.
+  </p>
+</section>
+
+<section class="lab">
+  <div class="lab-title">Data Points</div>
+
+  <div id="rows">
+    <div class="data-row">
+      <input type="number" placeholder="Input" />
+      <div class="arrow">→</div>
+      <input type="number" placeholder="Output" />
+    </div>
+  </div>
+
+  <button class="add-btn" onclick="addRow()">+ Add data point</button>
+
+  <div class="action">
+    <button>Train Relationship</button>
+  </div>
+</section>
+
+<div class="note">
+This interface is designed for experimental exploration of numerical relationships.
+</div>
+
+<script>
+function addRow() {
+  const rows = document.getElementById("rows");
+
+  const row = document.createElement("div");
+  row.className = "data-row";
+
+  row.innerHTML = `
+    <input type="number" placeholder="Input" />
+    <div class="arrow">→</div>
+    <input type="number" placeholder="Output" />
+  `;
+
+  rows.appendChild(row);
+}
+</script>
+
+</body>
+</html>
