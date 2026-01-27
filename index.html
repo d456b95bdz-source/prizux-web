@@ -6,7 +6,7 @@
 <title>PRIZUX</title>
 
 <style>
-/* ========== RESET ========== */
+/* ===== RESET ===== */
 * {
   margin: 0;
   padding: 0;
@@ -20,7 +20,7 @@ body {
   overflow: hidden;
 }
 
-/* ========== INTRO ========== */
+/* ===== INTRO ===== */
 #intro {
   position: fixed;
   inset: 0;
@@ -37,7 +37,6 @@ body {
   height: 160px;
 }
 
-/* Nodes */
 .node {
   width: 26px;
   height: 26px;
@@ -52,7 +51,6 @@ body {
 .node.bottom { bottom: 0; left: 70px; animation-delay: .4s; }
 .node.left   { top: 55px; left: 0; animation-delay: .6s; }
 
-/* Arms */
 .arm {
   position: absolute;
   height: 6px;
@@ -89,7 +87,6 @@ body {
   animation-delay: 1.6s;
 }
 
-/* Brand */
 #brand {
   position: absolute;
   top: 185px;
@@ -102,22 +99,33 @@ body {
   animation-delay: 2.4s;
 }
 
-/* ========== MAIN ========== */
+/* ===== MAIN ===== */
 #main {
   display: none;
   min-height: 100vh;
-  padding: 80px 10%;
+  padding: 60px 10% 120px;
 }
 
+/* Header */
 header {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
   letter-spacing: 2px;
-  color: #111;
 }
 
+header .logo {
+  width: 22px;
+  height: 22px;
+  background: #111;
+  border-radius: 6px;
+}
+
+/* Hero */
 .hero {
   margin-top: 120px;
-  max-width: 680px;
+  max-width: 700px;
 }
 
 .hero h1 {
@@ -154,11 +162,6 @@ header {
   box-shadow: 0 12px 32px rgba(0,0,0,.08);
 }
 
-/* Accent lines */
-.card.core { border-top: 3px solid #4F46E5; }
-.card.edu  { border-top: 3px solid #16a34a; }
-.card.pro  { border-top: 3px solid #dc2626; }
-
 .card h2 {
   font-size: 22px;
   margin-bottom: 12px;
@@ -169,7 +172,11 @@ header {
   color: #666;
 }
 
-/* Tags */
+/* Accent */
+.card.core   { border-top: 3px solid #4F46E5; }
+.card.inf    { border-top: 3px solid #dc2626; }
+.card.chrono { border-top: 3px solid #16a34a; }
+
 .tag {
   display: inline-block;
   margin-top: 16px;
@@ -206,6 +213,7 @@ header {
 
 <body>
 
+<!-- INTRO -->
 <div id="intro">
   <div id="logo">
     <div class="node top"></div>
@@ -218,17 +226,21 @@ header {
   </div>
 </div>
 
+<!-- MAIN -->
 <div id="main">
-  <header>PRIZUX</header>
+  <header>
+    <div class="logo"></div>
+    <span>PRIZUX</span>
+  </header>
 
   <section class="hero">
     <h1>
-      Learn<br>
-      relationships.
+      Numerical<br>
+      Intelligence.
     </h1>
     <p>
-      An AI system that learns numerical relationships<br>
-      directly from your data.
+      PRIZUX is an AI system that learns relationships<br>
+      from numbers you provide.
     </p>
   </section>
 
@@ -236,24 +248,26 @@ header {
     <a href="/core.html" class="card core">
       <h2>PRIZUX Core</h2>
       <p>
-        Train a model with your numbers.<br>
-        Estimate a result.
+        The foundation model.<br>
+        Learn numerical relationships.
       </p>
-      <span class="tag">LIVE</span>
+      <span class="tag">ENTER</span>
     </a>
 
-    <div class="card edu">
-      <h2>Education</h2>
+    <div class="card inf">
+      <h2>PRIZUX Inferno</h2>
       <p>
-        Visualize how relationships form.
+        Time-based inference with<br>
+        advanced models.
       </p>
       <span class="tag soon">COMING SOON</span>
     </div>
 
-    <div class="card pro">
-      <h2>Pro</h2>
+    <div class="card chrono">
+      <h2>PRIZUX Chrono</h2>
       <p>
-        Advanced inference with structured data.
+        Scientific computation and<br>
+        design exploration.
       </p>
       <span class="tag soon">COMING SOON</span>
     </div>
