@@ -2,161 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<title>PRIZUX Core</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PRIZUX</title>
 
 <style>
-/* ===== RESET ===== */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-  background: #ffffff;
+  background: #fff;
   color: #111;
-  line-height: 1.6;
+  padding: 80px 10%;
 }
 
-/* ===== LAYOUT ===== */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 80px 24px;
-}
-
-/* ===== HEADER ===== */
 header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid #eee;
-  z-index: 100;
-}
-
-header .inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  font-weight: 600;
+  font-size: 18px;
   letter-spacing: 2px;
 }
 
-/* ===== HERO ===== */
-.hero {
-  padding-top: 160px;
-  padding-bottom: 140px;
+h1 {
+  font-size: 52px;
+  margin-top: 120px;
 }
 
-.hero h1 {
-  font-size: 64px;
-  font-weight: 600;
-  letter-spacing: -1px;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  font-size: 20px;
+p.subtitle {
+  margin-top: 20px;
+  font-size: 18px;
   color: #555;
   max-width: 720px;
 }
 
-/* ===== SECTIONS ===== */
-section {
-  margin-top: 160px;
-}
-
-.section-title {
-  font-size: 34px;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-.section-text {
-  font-size: 18px;
-  color: #555;
-  max-width: 760px;
-}
-
-/* ===== STEPS ===== */
-.steps {
-  margin-top: 48px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 40px;
-}
-
-.step {
-  border-top: 1px solid #eee;
-  padding-top: 24px;
-}
-
-.step h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-.step p {
-  color: #666;
-}
-
-/* ===== PRODUCTS ===== */
-.products {
-  margin-top: 48px;
+.models {
+  margin-top: 120px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 32px;
 }
 
-.product {
+.card {
   border: 1px solid #eee;
   border-radius: 18px;
   padding: 32px;
-  transition: transform .2s ease, box-shadow .2s ease;
 }
 
-.product:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-}
-
-.product h3 {
+.card h2 {
   font-size: 22px;
   margin-bottom: 12px;
 }
 
-.product p {
+.card p {
+  font-size: 15px;
   color: #666;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  margin-top: 200px;
-  padding: 40px 24px;
-  border-top: 1px solid #eee;
-  color: #777;
-  font-size: 14px;
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 44px;
-  }
-
-  .hero p {
-    font-size: 18px;
-  }
 }
 </style>
 </head>
@@ -164,111 +62,43 @@ footer {
 <body>
 
 <header>
-  <div class="inner">
-    <div class="logo">PRIZUX</div>
-  </div>
+  <a href="/" style="text-decoration:none;color:#555;">← PRIZUX</a>
 </header>
 
-<div class="container">
+<h1>PRIZUX Core</h1>
+<p class="subtitle">
+PRIZUX Core is the foundation of the PRIZUX system.
+It provides multiple layers for exploring numerical relationships.
+</p>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <h1>PRIZUX</h1>
+<section class="models">
+
+  <div class="card">
+    <h2>PRIZUX Deep Core</h2>
     <p>
-      An AI system designed to learn relationships between numbers.<br>
-      You provide the data. PRIZUX builds the model.
+      The fundamental model.<br>
+      Users provide numerical pairs and the system learns
+      their relationship to estimate outcomes.
     </p>
-  </section>
+  </div>
 
-  <!-- ===== WHAT IT DOES ===== -->
-  <section>
-    <h2 class="section-title">What PRIZUX does</h2>
-    <p class="section-text">
-      PRIZUX allows you to train an AI model directly using numerical data you provide.
-      By learning how values relate to each other, PRIZUX enables structured exploration
-      of numerical relationships.
+  <div class="card">
+    <h2>PRIZUX Education</h2>
+    <p>
+      Visual explanations of how relationships form,
+      including graphs and learning dynamics.
     </p>
+  </div>
 
-    <div class="steps">
-      <div class="step">
-        <h3>Provide Data</h3>
-        <p>Input numerical pairs that represent the relationship you want to explore.</p>
-      </div>
-      <div class="step">
-        <h3>Train Instantly</h3>
-        <p>The model learns directly from your data in real time.</p>
-      </div>
-      <div class="step">
-        <h3>Estimate Results</h3>
-        <p>Input a new value and observe the estimated outcome.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== WHY ===== -->
-  <section>
-    <h2 class="section-title">Why PRIZUX</h2>
-    <p class="section-text">
-      Most tools rely on fixed assumptions and predefined formulas.
-      PRIZUX adapts to your data instead.
-      The structure is learned, not assumed.
+  <div class="card">
+    <h2>PRIZUX Pro</h2>
+    <p>
+      Extended capabilities with structured datasets,
+      CSV uploads, and advanced controls.
     </p>
-  </section>
+  </div>
 
-  <!-- ===== PRODUCTS ===== -->
-  <section>
-    <h2 class="section-title">Product Line</h2>
-
-    <div class="products">
-      <div class="product">
-        <h3>PRIZUX Core</h3>
-        <p>
-          Learn relationships between a single input and output variable
-          using user-provided numerical data.
-        </p>
-      </div>
-
-      <div class="product">
-        <h3>PRIZUX Pro</h3>
-        <p>
-          Extended experimentation with structured datasets,
-          including CSV-based workflows.
-        </p>
-      </div>
-
-      <div class="product">
-        <h3>PRIZUX Inferno</h3>
-        <p>
-          Advanced inference for time-dependent numerical data
-          using large-scale models.
-        </p>
-      </div>
-
-      <div class="product">
-        <h3>PRIZUX Chrono</h3>
-        <p>
-          Scientific computation and design-oriented numerical exploration
-          based on mathematical modeling.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== TARGET ===== -->
-  <section>
-    <h2 class="section-title">Who it’s for</h2>
-    <p class="section-text">
-      PRIZUX is built for people who work with numbers —
-      students, developers, researchers, and anyone interested
-      in exploring numerical relationships.
-    </p>
-  </section>
-
-</div>
-
-<footer>
-  © 2026 PRIZUX
-</footer>
+</section>
 
 </body>
 </html>
