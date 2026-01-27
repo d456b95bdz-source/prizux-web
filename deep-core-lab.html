@@ -61,28 +61,6 @@ header {
   margin-bottom: 20px;
 }
 
-.label-grid {
-  display: grid;
-  grid-template-columns: 1fr 120px 120px 40px 1fr 120px 120px;
-  gap: 12px;
-  margin-bottom: 30px;
-}
-
-.label-grid input,
-.label-grid select {
-  padding: 10px 14px;
-  font-size: 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-}
-
-.arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888;
-}
-
 .data-row {
   display: flex;
   align-items: center;
@@ -96,6 +74,10 @@ header {
   font-size: 16px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
+}
+
+.arrow {
+  color: #888;
 }
 
 button {
@@ -116,8 +98,9 @@ button {
 }
 
 .result {
-  margin-top: 40px;
-  font-size: 18px;
+  margin-top: 30px;
+  font-size: 20px;
+  font-weight: 500;
 }
 </style>
 </head>
@@ -136,37 +119,6 @@ button {
 
 <section class="lab">
 
-  <div class="section-title">Labels & Units</div>
-
-  <div class="label-grid">
-    <input id="xLabel" placeholder="Input label" />
-    <select id="xType">
-      <option value="length">Length</option>
-      <option value="mass">Mass</option>
-      <option value="time">Time</option>
-      <option value="money">Money</option>
-    </select>
-    <select id="xUnit">
-      <option value="cm">cm</option>
-      <option value="m">m</option>
-      <option value="USD">USD</option>
-      <option value="KRW">KRW</option>
-    </select>
-
-    <div class="arrow">→</div>
-
-    <input id="yLabel" placeholder="Output label" />
-    <select id="yType">
-      <option value="money">Money</option>
-      <option value="length">Length</option>
-    </select>
-    <select id="yUnit">
-      <option value="USD">USD</option>
-      <option value="KRW">KRW</option>
-      <option value="cm">cm</option>
-    </select>
-  </div>
-
   <div class="section-title">Training Data</div>
 
   <div id="rows">
@@ -183,8 +135,10 @@ button {
     <button onclick="train()">Train</button>
   </div>
 
-  <div style="margin-top:40px;">
-    <input id="predictInput" placeholder="Test input" />
+  <div class="section-title" style="margin-top:60px;">Prediction</div>
+
+  <div class="data-row">
+    <input id="predictInput" placeholder="Input x" />
     <button onclick="predict()">Predict</button>
   </div>
 
@@ -193,8 +147,18 @@ button {
 </section>
 
 <script>
+// ==============================
+// API CONFIG
+// ==============================
+// 로컬 테스트
 const API = "http://127.0.0.1:8000";
 
+// 나중에 서버 올리면 ↓ 이것만 바꾸면 됨
+// const API = "https://api.prizux.com";
+
+// ==============================
+// UI HELPERS
+// ==============================
 function addRow() {
   const row = document.createElement("div");
   row.className = "data-row";
@@ -206,41 +170,58 @@ function addRow() {
   document.getElementById("rows").appendChild(row);
 }
 
+// ==============================
+// TRAIN
+// ==============================
 async function train() {
   const xs = [...document.querySelectorAll(".xVal")].map(i => Number(i.value));
   const ys = [...document.querySelectorAll(".yVal")].map(i => Number(i.value));
 
-  await fetch(API + "/train", {
+  const res = await fetch(API + "/api/train", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       x: xs,
-      y: ys,
-      x_type: xType.value,
-      x_unit: xUnit.value,
-      y_type: yType.value,
-      y_unit: yUnit.value
-    })
-  });
-
-  alert("Model trained");
-}
-
-async function predict() {
-  const res = await fetch(API + "/predict", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      x_value: Number(predictInput.value),
-      x_type: xType.value,
-      x_unit: xUnit.value,
-      y_type: yType.value,
-      y_unit: yUnit.value
+      y: ys
     })
   });
 
   const data = await res.json();
-  result.innerHTML = `Result: ${data.min.toFixed(2)} – ${data.max.toFixed(2)} ${data.unit}`;
+
+  if (!res.ok) {
+    alert("Train failed: " + data.detail);
+    return;
+  }
+
+  alert(
+    `Model trained\nw = ${data.weight.toFixed(4)}\nb = ${data.bias.toFixed(4)}`
+  );
+}
+
+// ==============================
+// PREDICT
+// ==============================
+async function predict() {
+  const x = Number(document.getElementById("predictInput").value);
+
+  const res = await fetch(API + "/api/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      x: x
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    document.getElementById("result").innerText =
+      "Error: " + data.detail;
+    return;
+  }
+
+  document.getElementById("result").innerText =
+    `Prediction: y = ${data.prediction.toFixed(4)}`;
 }
 </script>
 
