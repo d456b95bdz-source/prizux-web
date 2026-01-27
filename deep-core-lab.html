@@ -60,7 +60,7 @@ header a {
   line-height: 1.6;
 }
 
-/* LAB PANEL */
+/* LAB */
 .lab {
   margin-top: 120px;
   max-width: 820px;
@@ -168,8 +168,8 @@ header a {
 <section class="hero">
   <h1>Relationship Lab</h1>
   <p>
-    Define what numbers represent.<br>
-    Train a model to learn their relationship.
+    Define labels and units.<br>
+    Train a model to learn numerical relationships.
   </p>
 </section>
 
@@ -186,6 +186,10 @@ header a {
       <option value="length">Length</option>
       <option value="mass">Mass</option>
       <option value="force">Force</option>
+      <option value="time">Time</option>
+      <option value="velocity">Velocity</option>
+      <option value="acceleration">Acceleration</option>
+      <option value="money">Money</option>
     </select>
     <select id="inputUnit">
       <option value="">Unit</option>
@@ -201,6 +205,10 @@ header a {
       <option value="length">Length</option>
       <option value="mass">Mass</option>
       <option value="force">Force</option>
+      <option value="time">Time</option>
+      <option value="velocity">Velocity</option>
+      <option value="acceleration">Acceleration</option>
+      <option value="money">Money</option>
     </select>
     <select id="outputUnit">
       <option value="">Unit</option>
@@ -226,7 +234,7 @@ header a {
 </section>
 
 <div class="note">
-Units provide structural context without enforcing semantic meaning.
+Units provide structural context without enforcing semantic interpretation.
 </div>
 
 <script>
@@ -234,7 +242,11 @@ const unitMap = {
   count: ["count", "items"],
   length: ["mm", "cm", "m", "km"],
   mass: ["g", "kg", "t"],
-  force: ["N", "kN"]
+  force: ["N", "kN"],
+  time: ["ms", "s", "min", "h"],
+  velocity: ["m/s", "km/h"],
+  acceleration: ["m/s²"],
+  money: ["KRW (₩)", "USD ($)", "CNY (¥)", "JPY (¥)", "EUR (€)"]
 };
 
 function updateUnits(select, targetId) {
