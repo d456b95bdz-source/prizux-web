@@ -6,12 +6,10 @@ from typing import List
 class DeepCoreModel:
     """
     PRIZUX Deep Core
-    - Single-variable regression model
-    - Learns relationship between x and y
-    - Stores learned parameters (w, b)
+    - Single-variable linear regression
     """
 
-    def __init__(self, model_path: str = "weights.json"):
+    def __init__(self, model_path: str = "models/weights.json"):
         self.model_path = model_path
         self.w = 0.0
         self.b = 0.0
@@ -28,21 +26,16 @@ class DeepCoreModel:
             raise ValueError("x and y must have the same non-zero length")
 
         n = len(x)
-
         mean_x = sum(x) / n
         mean_y = sum(y) / n
 
-        numerator = sum(
-            (x[i] - mean_x) * (y[i] - mean_y) for i in range(n)
-        )
-        denominator = sum(
-            (x[i] - mean_x) ** 2 for i in range(n)
-        )
+        num = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+        den = sum((x[i] - mean_x) ** 2 for i in range(n))
 
-        if denominator == 0:
-            raise ValueError("Cannot train model: zero variance in x")
+        if den == 0:
+            raise ValueError("Zero variance in x")
 
-        self.w = numerator / denominator
+        self.w = num / den
         self.b = mean_y - self.w * mean_x
         self.trained = True
 
@@ -62,10 +55,7 @@ class DeepCoreModel:
     def save(self):
         with open(self.model_path, "w") as f:
             json.dump(
-                {
-                    "w": self.w,
-                    "b": self.b
-                },
+                {"w": self.w, "b": self.b},
                 f,
                 indent=2
             )
@@ -78,7 +68,7 @@ class DeepCoreModel:
             self.trained = True
 
     # =========================
-    # Introspection (Education)
+    # Introspection
     # =========================
     def parameters(self):
         return {
