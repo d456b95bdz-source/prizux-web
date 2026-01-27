@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-/* ===== RESET ===== */
 * {
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -19,7 +18,7 @@ body {
   color: #111;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header {
   display: flex;
   align-items: center;
@@ -43,10 +42,10 @@ header a {
   border-radius: 6px;
 }
 
-/* ===== HERO ===== */
+/* HERO */
 .hero {
   margin-top: 120px;
-  max-width: 720px;
+  max-width: 760px;
 }
 
 .hero h1 {
@@ -62,18 +61,34 @@ header a {
   line-height: 1.6;
 }
 
-/* ===== LAB ===== */
+/* LAB */
 .lab {
   margin-top: 120px;
-  max-width: 720px;
+  max-width: 760px;
 }
 
-.lab-title {
+.section-title {
   font-size: 20px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
-/* ===== DATA ROW ===== */
+/* LABEL ROW */
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.label-row input {
+  width: 200px;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+/* DATA ROW */
 .data-row {
   display: flex;
   align-items: center;
@@ -82,16 +97,17 @@ header a {
 }
 
 .data-row input {
-  width: 140px;
+  width: 160px;
   padding: 10px 14px;
   font-size: 16px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  outline: none;
 }
 
-.data-row input:focus {
+.data-row input:focus,
+.label-row input:focus {
   border-color: #4F46E5;
+  outline: none;
 }
 
 .arrow {
@@ -99,7 +115,7 @@ header a {
   color: #888;
 }
 
-/* ===== ADD BUTTON ===== */
+/* ADD BUTTON */
 .add-btn {
   margin-top: 12px;
   background: none;
@@ -107,14 +123,13 @@ header a {
   color: #4F46E5;
   font-size: 15px;
   cursor: pointer;
-  padding: 6px 0;
 }
 
 .add-btn:hover {
   text-decoration: underline;
 }
 
-/* ===== ACTION ===== */
+/* ACTION */
 .action {
   margin-top: 60px;
 }
@@ -133,15 +148,15 @@ header a {
   opacity: .9;
 }
 
-/* ===== NOTE ===== */
+/* FOOT NOTE */
 .note {
   margin-top: 120px;
   font-size: 14px;
   color: #777;
-  max-width: 720px;
+  max-width: 760px;
 }
 
-/* ===== MOBILE ===== */
+/* MOBILE */
 @media (max-width: 768px) {
   body {
     padding: 40px 6% 120px;
@@ -151,7 +166,8 @@ header a {
     font-size: 40px;
   }
 
-  .data-row input {
+  .data-row input,
+  .label-row input {
     width: 120px;
   }
 }
@@ -168,24 +184,29 @@ header a {
 </header>
 
 <section class="hero">
-  <h1>
-    Relationship<br>
-    Lab
-  </h1>
+  <h1>Relationship Lab</h1>
   <p>
-    Provide numerical pairs.<br>
-    The system learns their relationship.
+    Define what the numbers represent.<br>
+    Provide data points and explore their relationship.
   </p>
 </section>
 
 <section class="lab">
-  <div class="lab-title">Data Points</div>
+
+  <div class="section-title">Labels</div>
+  <div class="label-row">
+    <input type="text" placeholder="Input label (e.g. Shoe Size)" />
+    <div class="arrow">→</div>
+    <input type="text" placeholder="Output label (e.g. Height)" />
+  </div>
+
+  <div class="section-title">Data Points</div>
 
   <div id="rows">
     <div class="data-row">
-      <input type="number" placeholder="Input" />
+      <input type="number" placeholder="Input value" />
       <div class="arrow">→</div>
-      <input type="number" placeholder="Output" />
+      <input type="number" placeholder="Output value" />
     </div>
   </div>
 
@@ -194,10 +215,12 @@ header a {
   <div class="action">
     <button>Train Relationship</button>
   </div>
+
 </section>
 
 <div class="note">
-This interface is designed for experimental exploration of numerical relationships.
+Relationship Lab is designed for exploratory numerical experiments.
+Labels help contextualize relationships without enforcing domain assumptions.
 </div>
 
 <script>
@@ -208,9 +231,9 @@ function addRow() {
   row.className = "data-row";
 
   row.innerHTML = `
-    <input type="number" placeholder="Input" />
+    <input type="number" placeholder="Input value" />
     <div class="arrow">→</div>
-    <input type="number" placeholder="Output" />
+    <input type="number" placeholder="Output value" />
   `;
 
   rows.appendChild(row);
