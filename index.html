@@ -37,7 +37,7 @@ body {
   height: 160px;
 }
 
-/* ===== Nodes ===== */
+/* Nodes */
 .node {
   width: 26px;
   height: 26px;
@@ -45,14 +45,14 @@ body {
   border-radius: 50%;
   position: absolute;
   opacity: 0;
-  animation: nodeIn 0.6s ease forwards;
+  animation: nodeIn .6s ease forwards;
 }
 
-.node.top    { top: 0; right: 0; animation-delay: 0.2s; }
-.node.bottom { bottom: 0; left: 70px; animation-delay: 0.4s; }
-.node.left   { top: 55px; left: 0; animation-delay: 0.6s; }
+.node.top    { top: 0; right: 0; animation-delay: .2s; }
+.node.bottom { bottom: 0; left: 70px; animation-delay: .4s; }
+.node.left   { top: 55px; left: 0; animation-delay: .6s; }
 
-/* ===== Arms ===== */
+/* Arms */
 .arm {
   position: absolute;
   height: 6px;
@@ -60,7 +60,7 @@ body {
   border-radius: 3px;
   transform-origin: left center;
   opacity: 0;
-  animation: armIn 0.5s ease forwards;
+  animation: armIn .5s ease forwards;
 }
 
 .arm.main {
@@ -68,7 +68,7 @@ body {
   top: 72px;
   left: 80px;
   transform: rotate(-60deg);
-  animation-delay: 0.9s;
+  animation-delay: .9s;
 }
 
 .arm.down {
@@ -85,22 +85,21 @@ body {
   left: 35px;
   transform: scaleX(0);
   transform-origin: right center;
-  opacity: 0;
-  animation: deliberateConnect 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: deliberateConnect 1.2s cubic-bezier(.4,0,.2,1) forwards;
   animation-delay: 1.6s;
 }
 
-/* ===== Brand ===== */
+/* Brand */
 #brand {
   position: absolute;
+  top: 185px;
   width: 100%;
   text-align: center;
-  top: 185px;
   font-size: 22px;
   letter-spacing: 4px;
   opacity: 0;
-  animation: brandIn 0.7s ease forwards;
-  animation-delay: 2.5s;
+  animation: brandIn .7s ease forwards;
+  animation-delay: 2.4s;
 }
 
 /* ========== MAIN ========== */
@@ -111,32 +110,33 @@ body {
 }
 
 header {
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: 2px;
+  color: #111;
 }
 
 .hero {
   margin-top: 120px;
-  max-width: 720px;
+  max-width: 680px;
 }
 
 .hero h1 {
-  font-size: 54px;
+  font-size: 56px;
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
 .hero p {
-  margin-top: 28px;
+  margin-top: 24px;
   font-size: 18px;
   color: #555;
 }
 
-/* ===== Models ===== */
+/* Models */
 .models {
   margin-top: 140px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
   gap: 32px;
 }
 
@@ -154,26 +154,25 @@ header {
   box-shadow: 0 12px 32px rgba(0,0,0,.08);
 }
 
-/* subtle color accents */
-.card.core { border-top: 4px solid #4F46E5; }
-.card.edu  { border-top: 4px solid #16a34a; }
-.card.pro  { border-top: 4px solid #dc2626; }
+/* Accent lines */
+.card.core { border-top: 3px solid #4F46E5; }
+.card.edu  { border-top: 3px solid #16a34a; }
+.card.pro  { border-top: 3px solid #dc2626; }
 
 .card h2 {
   font-size: 22px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .card p {
   font-size: 15px;
   color: #666;
-  line-height: 1.5;
 }
 
-/* tags */
+/* Tags */
 .tag {
   display: inline-block;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 4px 10px;
   font-size: 11px;
   border-radius: 999px;
@@ -186,20 +185,19 @@ header {
   color: #6b7280;
 }
 
-/* ========== ANIMATIONS ========== */
+/* Animations */
 @keyframes nodeIn { to { opacity: 1; } }
 @keyframes armIn  { to { opacity: 1; } }
 
 @keyframes deliberateConnect {
   0%   { transform: scaleX(0); opacity: 0; }
-  30%  { transform: scaleX(1); opacity: 0.6; }
-  65%  { transform: scaleX(1); opacity: 0.6; }
+  40%  { transform: scaleX(1); opacity: .6; }
   100% { transform: scaleX(0); opacity: 0; }
 }
 
 @keyframes brandIn { to { opacity: 1; } }
 
-/* ========== MOBILE ========== */
+/* Mobile */
 @media (max-width: 768px) {
   .hero h1 { font-size: 42px; }
 }
@@ -208,33 +206,29 @@ header {
 
 <body>
 
-<!-- ========== INTRO ========== -->
 <div id="intro">
   <div id="logo">
     <div class="node top"></div>
     <div class="node bottom"></div>
     <div class="node left"></div>
-
     <div class="arm main"></div>
     <div class="arm down"></div>
     <div class="arm try"></div>
-
     <div id="brand">PRIZUX</div>
   </div>
 </div>
 
-<!-- ========== MAIN ========== -->
 <div id="main">
   <header>PRIZUX</header>
 
   <section class="hero">
     <h1>
-      Probability,<br>
-      not promises.
+      Learn<br>
+      relationships.
     </h1>
     <p>
-      PRIZUX is an AI inference system.<br>
-      It evaluates infinite possibilities with new technology node connection.
+      An AI system that learns numerical relationships<br>
+      directly from your data.
     </p>
   </section>
 
@@ -242,29 +236,27 @@ header {
     <a href="/core.html" class="card core">
       <h2>PRIZUX Core</h2>
       <p>
-        Clear probability-based signals.<br>
-        No noise. Only Prediction.
+        Train a model with your numbers.<br>
+        Estimate a result.
       </p>
       <span class="tag">LIVE</span>
     </a>
 
-    <a href="/education.html" class="card edu">
-      <h2>Education Model</h2>
+    <div class="card edu">
+      <h2>Education</h2>
       <p>
-        Visual reasoning paths.<br>
-        Understand how signals form.
+        Visualize how relationships form.
       </p>
       <span class="tag soon">COMING SOON</span>
-    </a>
+    </div>
 
-    <a href="/pro.html" class="card pro">
-      <h2>Pro Model</h2>
+    <div class="card pro">
+      <h2>Pro</h2>
       <p>
-        The Most Powerful Multi-layer inference system.<br>
-        Structured market context.
+        Advanced inference with structured data.
       </p>
       <span class="tag soon">COMING SOON</span>
-    </a>
+    </div>
   </section>
 </div>
 
@@ -275,7 +267,7 @@ const endIntro = () => {
   document.body.style.overflow = "auto";
 };
 
-setTimeout(endIntro, 3300);
+setTimeout(endIntro, 3000);
 document.addEventListener("click", endIntro, { once: true });
 </script>
 
