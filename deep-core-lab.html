@@ -18,21 +18,12 @@ body {
   color: #111;
 }
 
-/* HEADER */
 header {
   display: flex;
   align-items: center;
   gap: 10px;
   font-weight: 600;
   letter-spacing: 2px;
-}
-
-header a {
-  text-decoration: none;
-  color: #111;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .logo {
@@ -42,27 +33,23 @@ header a {
   border-radius: 6px;
 }
 
-/* HERO */
 .hero {
-  margin-top: 120px;
+  margin-top: 100px;
   max-width: 760px;
 }
 
 .hero h1 {
-  font-size: 52px;
-  font-weight: 600;
+  font-size: 48px;
 }
 
 .hero p {
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 18px;
   color: #555;
-  line-height: 1.6;
 }
 
-/* LAB */
 .lab {
-  margin-top: 120px;
+  margin-top: 100px;
   max-width: 820px;
   padding: 40px;
   border: 1px solid #eee;
@@ -74,12 +61,11 @@ header a {
   margin-bottom: 20px;
 }
 
-/* LABEL + UNIT */
 .label-grid {
   display: grid;
-  grid-template-columns: 1fr 140px 120px 40px 1fr 140px 120px;
+  grid-template-columns: 1fr 120px 120px 40px 1fr 120px 120px;
   gap: 12px;
-  margin-bottom: 36px;
+  margin-bottom: 30px;
 }
 
 .label-grid input,
@@ -95,15 +81,13 @@ header a {
   align-items: center;
   justify-content: center;
   color: #888;
-  font-size: 18px;
 }
 
-/* DATA ROW */
 .data-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .data-row input {
@@ -114,24 +98,8 @@ header a {
   border-radius: 12px;
 }
 
-/* ADD */
-.add-btn {
-  margin-top: 10px;
-  background: none;
-  border: none;
-  color: #4F46E5;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-/* ACTION */
-.action {
-  margin-top: 50px;
-}
-
-.action button {
-  padding: 14px 32px;
-  font-size: 16px;
+button {
+  padding: 12px 26px;
   border-radius: 999px;
   border: none;
   background: #111;
@@ -139,19 +107,17 @@ header a {
   cursor: pointer;
 }
 
-/* NOTE */
-.note {
-  margin-top: 120px;
-  font-size: 14px;
-  color: #777;
-  max-width: 760px;
+.add-btn {
+  margin-top: 10px;
+  background: none;
+  color: #4F46E5;
+  border: none;
+  cursor: pointer;
 }
 
-/* MOBILE */
-@media (max-width: 900px) {
-  .label-grid {
-    grid-template-columns: 1fr;
-  }
+.result {
+  margin-top: 40px;
+  font-size: 18px;
 }
 </style>
 </head>
@@ -159,18 +125,13 @@ header a {
 <body>
 
 <header>
-  <a href="/core.html">
-    <div class="logo"></div>
-    <span>PRIZUX</span>
-  </a>
+  <div class="logo"></div>
+  <span>PRIZUX</span>
 </header>
 
 <section class="hero">
   <h1>Relationship Lab</h1>
-  <p>
-    Define labels and units.<br>
-    Train a model to learn numerical relationships.
-  </p>
+  <p>Train numerical relationships and test new inputs.</p>
 </section>
 
 <section class="lab">
@@ -178,99 +139,108 @@ header a {
   <div class="section-title">Labels & Units</div>
 
   <div class="label-grid">
-    <!-- INPUT -->
-    <input placeholder="Input label" />
-    <select onchange="updateUnits(this, 'inputUnit')">
-      <option value="">Type</option>
-      <option value="count">Count</option>
+    <input id="xLabel" placeholder="Input label" />
+    <select id="xType">
       <option value="length">Length</option>
       <option value="mass">Mass</option>
-      <option value="force">Force</option>
       <option value="time">Time</option>
-      <option value="velocity">Velocity</option>
-      <option value="acceleration">Acceleration</option>
       <option value="money">Money</option>
     </select>
-    <select id="inputUnit">
-      <option value="">Unit</option>
+    <select id="xUnit">
+      <option value="cm">cm</option>
+      <option value="m">m</option>
+      <option value="USD">USD</option>
+      <option value="KRW">KRW</option>
     </select>
 
     <div class="arrow">→</div>
 
-    <!-- OUTPUT -->
-    <input placeholder="Output label" />
-    <select onchange="updateUnits(this, 'outputUnit')">
-      <option value="">Type</option>
-      <option value="count">Count</option>
-      <option value="length">Length</option>
-      <option value="mass">Mass</option>
-      <option value="force">Force</option>
-      <option value="time">Time</option>
-      <option value="velocity">Velocity</option>
-      <option value="acceleration">Acceleration</option>
+    <input id="yLabel" placeholder="Output label" />
+    <select id="yType">
       <option value="money">Money</option>
+      <option value="length">Length</option>
     </select>
-    <select id="outputUnit">
-      <option value="">Unit</option>
+    <select id="yUnit">
+      <option value="USD">USD</option>
+      <option value="KRW">KRW</option>
+      <option value="cm">cm</option>
     </select>
   </div>
 
-  <div class="section-title">Data Points</div>
+  <div class="section-title">Training Data</div>
 
   <div id="rows">
     <div class="data-row">
-      <input type="number" placeholder="Input value" />
+      <input class="xVal" placeholder="x" />
       <div class="arrow">→</div>
-      <input type="number" placeholder="Output value" />
+      <input class="yVal" placeholder="y" />
     </div>
   </div>
 
-  <button class="add-btn" onclick="addRow()">+ Add data point</button>
+  <button class="add-btn" onclick="addRow()">+ Add data</button>
 
-  <div class="action">
-    <button>Train Relationship</button>
+  <div style="margin-top:30px;">
+    <button onclick="train()">Train</button>
   </div>
+
+  <div style="margin-top:40px;">
+    <input id="predictInput" placeholder="Test input" />
+    <button onclick="predict()">Predict</button>
+  </div>
+
+  <div id="result" class="result"></div>
 
 </section>
 
-<div class="note">
-Units provide structural context without enforcing semantic interpretation.
-</div>
-
 <script>
-const unitMap = {
-  count: ["count", "items"],
-  length: ["mm", "cm", "m", "km"],
-  mass: ["g", "kg", "t"],
-  force: ["N", "kN"],
-  time: ["ms", "s", "min", "h"],
-  velocity: ["m/s", "km/h"],
-  acceleration: ["m/s²"],
-  money: ["KRW (₩)", "USD ($)", "CNY (¥)", "JPY (¥)", "EUR (€)"]
-};
-
-function updateUnits(select, targetId) {
-  const unitSelect = document.getElementById(targetId);
-  unitSelect.innerHTML = '<option value="">Unit</option>';
-  const units = unitMap[select.value] || [];
-  units.forEach(u => {
-    const opt = document.createElement("option");
-    opt.value = u;
-    opt.textContent = u;
-    unitSelect.appendChild(opt);
-  });
-}
+const API = "http://127.0.0.1:8000";
 
 function addRow() {
-  const rows = document.getElementById("rows");
   const row = document.createElement("div");
   row.className = "data-row";
   row.innerHTML = `
-    <input type="number" placeholder="Input value" />
+    <input class="xVal" placeholder="x" />
     <div class="arrow">→</div>
-    <input type="number" placeholder="Output value" />
+    <input class="yVal" placeholder="y" />
   `;
-  rows.appendChild(row);
+  document.getElementById("rows").appendChild(row);
+}
+
+async function train() {
+  const xs = [...document.querySelectorAll(".xVal")].map(i => Number(i.value));
+  const ys = [...document.querySelectorAll(".yVal")].map(i => Number(i.value));
+
+  await fetch(API + "/train", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      x: xs,
+      y: ys,
+      x_type: xType.value,
+      x_unit: xUnit.value,
+      y_type: yType.value,
+      y_unit: yUnit.value
+    })
+  });
+
+  alert("Model trained");
+}
+
+async function predict() {
+  const res = await fetch(API + "/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      x_value: Number(predictInput.value),
+      x_type: xType.value,
+      x_unit: xUnit.value,
+      y_type: yType.value,
+      y_unit: yUnit.value
+    })
+  });
+
+  const data = await res.json();
+  result.innerHTML = `Result: ${data.min.toFixed(2)} – ${data.max.toFixed(2)} ${data.unit}`;
 }
 </script>
 
