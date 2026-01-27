@@ -1,214 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>PRIZUX Core</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PRIZUX</title>
 
 <style>
-:root {
-  --primary: #4F46E5;
-  --accent-green: #16A34A;
-  --accent-blue: #2563EB;
-  --soft-bg: #F8FAFF;
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fff;
+  background: #ffffff;
   color: #111;
-  padding: 80px 10%;
+  line-height: 1.6;
 }
 
-h1 { font-size: 48px; }
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
 
-p {
-  margin-top: 20px;
+/* ===== HEADER ===== */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #eee;
+  z-index: 100;
+}
+
+header .inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding-top: 160px;
+  padding-bottom: 140px;
+}
+
+.hero h1 {
+  font-size: 64px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  color: #555;
+  max-width: 720px;
+}
+
+/* ===== SECTIONS ===== */
+section {
+  margin-top: 160px;
+}
+
+.section-title {
+  font-size: 34px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.section-text {
   font-size: 18px;
   color: #555;
   max-width: 760px;
 }
 
-.signal {
-  margin-top: 40px;
-  display: inline-block;
-  padding: 12px 22px;
-  border-radius: 999px;
-  background: rgba(22,163,74,.15);
-  color: var(--accent-green);
-  font-weight: 600;
+/* ===== STEPS ===== */
+.steps {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 40px;
 }
 
-/* ===== Section ===== */
-.section {
-  margin-top: 160px;
-  max-width: 980px;
-  opacity: 0;
-  transform: translateY(60px);
-  transition: opacity .8s ease, transform .8s ease;
-}
-.section.visible {
-  opacity: 1;
-  transform: translateY(0);
+.step {
+  border-top: 1px solid #eee;
+  padding-top: 24px;
 }
 
-.section h2 {
-  font-size: 40px;
-  margin-bottom: 28px;
-  color: var(--primary);
+.step h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-/* ===== Highlight ===== */
-.highlight {
-  margin-top: 60px;
-  padding: 40px 44px;
-  border-radius: 22px;
-  background: linear-gradient(
-    135deg,
-    rgba(79,70,229,.08),
-    rgba(37,99,235,.06)
-  );
-  border: 1px solid rgba(79,70,229,.18);
+.step p {
+  color: #666;
 }
 
-.highlight strong {
-  color: var(--primary);
+/* ===== PRODUCTS ===== */
+.products {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
 }
 
-/* ===== SVG Visual ===== */
-.visual {
-  margin-top: 80px;
-  max-width: 760px;
-  background: var(--soft-bg);
+.product {
+  border: 1px solid #eee;
+  border-radius: 18px;
   padding: 32px;
-  border-radius: 24px;
-  border: 1px solid rgba(79,70,229,.15);
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
-svg {
-  width: 100%;
-  height: auto;
+.product:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
-.label {
-  font-size: 12px;
-  fill: #6b7280;
+.product h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
 }
 
-/* ===== Back ===== */
-.back {
-  text-decoration: none;
-  color: var(--primary);
-  font-weight: 500;
+.product p {
+  color: #666;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 200px;
+  padding: 40px 24px;
+  border-top: 1px solid #eee;
+  color: #777;
+  font-size: 14px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 44px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<a href="/" class="back">← Back</a>
+<header>
+  <div class="inner">
+    <div class="logo">PRIZUX</div>
+  </div>
+</header>
 
-<h1>PRIZUX Core</h1>
+<div class="container">
 
-<p>
-PRIZUX Core provides how our A.I would make a decision in the situation
-based on our New Node Connection Technology.
-</p>
-
-<p>
-Designed for users who want direction without any noises.
-No charts. No complexity.
-</p>
-
-<div class="signal">Example Signal · BUY</div>
-
-<!-- ===== ADDITIONAL EXPLANATION ===== -->
-<section class="section" id="tech">
-
-  <h2>The Decision without any noise.</h2>
-
-  <p>
-  Most conventional market A.I. systems attempt to predict the exact future
-  price of an asset. This approach assumes that price movement is a stable,
-  learnable target.
-  </p>
-
-  <p>
-  In reality, price itself is the noisiest signal in the market.
-  Short-term randomness, external events, and micro-structure effects
-  severely degrade model reliability when exact values are treated as truth.
-  </p>
-
-  <div class="highlight">
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <h1>PRIZUX</h1>
     <p>
-    PRIZUX Core takes a fundamentally different approach.
-    <br><br>
-    Instead of predicting a precise price, AI-1 evaluates probabilistic
-    tendencies across multiple time horizons simultaneously.
-    This allows the system to suppress unstable fluctuations and focus on
-    directional structure rather than numerical precision.
+      An AI system designed to learn relationships between numbers.<br>
+      You provide the data. PRIZUX builds the model.
     </p>
-  </div>
+  </section>
 
-  <!-- ===== GENERATED SVG VISUAL ===== -->
-  <div class="visual">
-    <svg viewBox="0 0 760 260" xmlns="http://www.w3.org/2000/svg">
-
-      <!-- Traditional AI (noisy) -->
-      <polyline points="60,190 160,70 260,180 360,60"
-        fill="none"
-        stroke="#9CA3AF"
-        stroke-width="2"
-        stroke-dasharray="6 6"/>
-
-      <text x="60" y="220" class="label">Traditional AI</text>
-      <text x="60" y="238" class="label">Exact price prediction</text>
-
-      <!-- Noise points -->
-      <circle cx="140" cy="40" r="4" fill="#D1D5DB"/>
-      <circle cx="240" cy="50" r="4" fill="#D1D5DB"/>
-      <circle cx="320" cy="35" r="4" fill="#D1D5DB"/>
-
-      <!-- PRIZUX -->
-      <polyline points="420,160 500,145 580,135 660,125"
-        fill="none"
-        stroke="url(#grad)"
-        stroke-width="4"/>
-
-      <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#4F46E5"/>
-          <stop offset="100%" stop-color="#2563EB"/>
-        </linearGradient>
-      </defs>
-
-      <text x="420" y="220" class="label">PRIZUX Core</text>
-      <text x="420" y="238" class="label">Probabilistic direction</text>
-
-    </svg>
-  </div>
-
-  <p>
-  Historical data accumulation for AI-1 begins in early 2018,
-  covering multiple volatility regimes and market cycles.
-  </p>
-
-  <div class="highlight">
-    <p>
-    In internal validation, this probabilistic multi-horizon approach
-    demonstrated a <strong>18.7%</strong> improvement in signal consistency
-    compared to earlier single-path inference structures.
+  <!-- ===== WHAT IT DOES ===== -->
+  <section>
+    <h2 class="section-title">What PRIZUX does</h2>
+    <p class="section-text">
+      PRIZUX allows you to train an AI model directly using numerical data you provide.
+      By learning how values relate to each other, PRIZUX enables structured exploration
+      of numerical relationships.
     </p>
-  </div>
 
-</section>
+    <div class="steps">
+      <div class="step">
+        <h3>Provide Data</h3>
+        <p>Input numerical pairs that represent the relationship you want to explore.</p>
+      </div>
+      <div class="step">
+        <h3>Train Instantly</h3>
+        <p>The model learns directly from your data in real time.</p>
+      </div>
+      <div class="step">
+        <h3>Estimate Results</h3>
+        <p>Input a new value and observe the estimated outcome.</p>
+      </div>
+    </div>
+  </section>
 
-<script>
-const section = document.getElementById("tech");
-new IntersectionObserver(e=>{
-  if(e[0].isIntersecting) section.classList.add("visible");
-},{threshold:0.2}).observe(section);
-</script>
+  <!-- ===== WHY ===== -->
+  <section>
+    <h2 class="section-title">Why PRIZUX</h2>
+    <p class="section-text">
+      Most tools rely on fixed assumptions and predefined formulas.
+      PRIZUX adapts to your data instead.
+      The structure is learned, not assumed.
+    </p>
+  </section>
+
+  <!-- ===== PRODUCTS ===== -->
+  <section>
+    <h2 class="section-title">Product Line</h2>
+
+    <div class="products">
+      <div class="product">
+        <h3>PRIZUX Core</h3>
+        <p>
+          Learn relationships between a single input and output variable
+          using user-provided numerical data.
+        </p>
+      </div>
+
+      <div class="product">
+        <h3>PRIZUX Pro</h3>
+        <p>
+          Extended experimentation with structured datasets,
+          including CSV-based workflows.
+        </p>
+      </div>
+
+      <div class="product">
+        <h3>PRIZUX Inferno</h3>
+        <p>
+          Advanced inference for time-dependent numerical data
+          using large-scale models.
+        </p>
+      </div>
+
+      <div class="product">
+        <h3>PRIZUX Chrono</h3>
+        <p>
+          Scientific computation and design-oriented numerical exploration
+          based on mathematical modeling.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TARGET ===== -->
+  <section>
+    <h2 class="section-title">Who it’s for</h2>
+    <p class="section-text">
+      PRIZUX is built for people who work with numbers —
+      students, developers, researchers, and anyone interested
+      in exploring numerical relationships.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  © 2026 PRIZUX
+</footer>
 
 </body>
 </html>
