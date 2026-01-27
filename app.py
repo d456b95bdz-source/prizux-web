@@ -1,52 +1,107 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
-
-from deep_core_model import DeepCoreService
+import json
+import os
 
 app = FastAPI()
-core = DeepCoreService(degree=2)
 
-# ===== 요청 스키마 =====
-class TrainRequest(BaseModel):
+# =========================
+# Deep Core Model
+# =========================
+
+MODEL_PATH = "weights.json"
+
+class DeepCoreModel:
+    def __init__(self):
+        self.w = 0.0
+        self.b = 0.0
+        self.trained = False
+
+        if os.path.exists(MODEL_PATH):
+            self.load()
+
+    def train(self, x: List[float], y: List[float]):
+        n = len(x)
+        if n == 0 or n != len(y):
+            raise ValueError("Invalid training data")
+
+        mean_x = sum(x) / n
+        mean_y = sum(y) / n
+
+        num = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+        den = sum((x[i] - mean_x) ** 2 for i in range(n))
+
+        self.w = num / den if den != 0 else 0.0
+        self.b = mean_y - self.w * mean_x
+        self.trained = True
+
+        self.save()
+
+    def predict(self, x: float) -> float:
+        if not self.trained:
+            raise RuntimeError("Model not trained yet")
+        return self.w * x + self.b
+
+    def save(self):
+        with open(MODEL_PATH, "w") as f:
+            json.dump(
+                {
+                    "w": self.w,
+                    "b": self.b
+                },
+                f
+            )
+
+    def load(self):
+        with open(MODEL_PATH, "r") as f:
+            data = json.load(f)
+            self.w = data["w"]
+            self.b = data["b"]
+            self.trained = True
+
+
+model = DeepCoreModel()
+
+# =========================
+# API Schemas
+# =========================
+
+class TrainData(BaseModel):
     x: List[float]
     y: List[float]
-    x_type: str
-    x_unit: str
-    y_type: str
-    y_unit: str
+
+class PredictData(BaseModel):
+    x: float
 
 
-class PredictRequest(BaseModel):
-    x_value: float
-    x_type: str
-    x_unit: str
-    y_type: str
-    y_unit: str
+# =========================
+# Routes
+# =========================
+
+@app.get("/")
+def root():
+    return {
+        "service": "PRIZUX Deep Core",
+        "status": "alive",
+        "trained": model.trained
+    }
 
 
-# ===== Train =====
-@app.post("/train")
-def train(req: TrainRequest):
-    core.train(
-        x_vals=req.x,
-        y_vals=req.y,
-        x_type=req.x_type,
-        x_unit=req.x_unit,
-        y_type=req.y_type,
-        y_unit=req.y_unit
-    )
-    return {"status": "trained"}
+@app.post("/api/train")
+def train(data: TrainData):
+    model.train(data.x, data.y)
+    return {
+        "trained": True,
+        "weight": model.w,
+        "bias": model.b
+    }
 
 
-# ===== Predict =====
-@app.post("/predict")
-def predict(req: PredictRequest):
-    result = core.predict(
-        x_value=req.x_value,
-        x_type=req.x_type,
-        x_unit=req.x_unit,
-        y_type=req.y_type,
-        y_unit=req.y_unit
-    )
-    return result
+@app.post("/api/predict")
+def predict(data: PredictData):
+    y = model.predict(data.x)
+    return {
+        "input": data.x,
+        "prediction": y
+    }
