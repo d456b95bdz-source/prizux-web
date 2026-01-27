@@ -51,14 +51,12 @@ header a {
 .hero h1 {
   font-size: 52px;
   font-weight: 600;
-  line-height: 1.05;
 }
 
 .hero p {
   margin-top: 20px;
   font-size: 18px;
   color: #555;
-  line-height: 1.6;
 }
 
 /* LAB */
@@ -72,20 +70,28 @@ header a {
   margin-bottom: 18px;
 }
 
-/* LABEL ROW */
+/* LABEL + UNIT */
 .label-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: 1fr 160px 40px 1fr 160px;
+  gap: 12px;
   margin-bottom: 28px;
 }
 
-.label-row input {
-  width: 200px;
+.label-row input,
+.label-row select {
   padding: 10px 14px;
-  font-size: 15px;
+  font-size: 14px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 18px;
 }
 
 /* DATA ROW */
@@ -104,18 +110,7 @@ header a {
   border-radius: 12px;
 }
 
-.data-row input:focus,
-.label-row input:focus {
-  border-color: #4F46E5;
-  outline: none;
-}
-
-.arrow {
-  font-size: 18px;
-  color: #888;
-}
-
-/* ADD BUTTON */
+/* ADD */
 .add-btn {
   margin-top: 12px;
   background: none;
@@ -123,10 +118,6 @@ header a {
   color: #4F46E5;
   font-size: 15px;
   cursor: pointer;
-}
-
-.add-btn:hover {
-  text-decoration: underline;
 }
 
 /* ACTION */
@@ -144,11 +135,7 @@ header a {
   cursor: pointer;
 }
 
-.action button:hover {
-  opacity: .9;
-}
-
-/* FOOT NOTE */
+/* NOTE */
 .note {
   margin-top: 120px;
   font-size: 14px;
@@ -158,17 +145,9 @@ header a {
 
 /* MOBILE */
 @media (max-width: 768px) {
-  body {
-    padding: 40px 6% 120px;
-  }
-
-  .hero h1 {
-    font-size: 40px;
-  }
-
-  .data-row input,
-  .label-row input {
-    width: 120px;
+  body { padding: 40px 6% 120px; }
+  .label-row {
+    grid-template-columns: 1fr;
   }
 }
 </style>
@@ -186,18 +165,33 @@ header a {
 <section class="hero">
   <h1>Relationship Lab</h1>
   <p>
-    Define what the numbers represent.<br>
-    Provide data points and explore their relationship.
+    Define labels and units.<br>
+    Provide data points to explore numerical relationships.
   </p>
 </section>
 
 <section class="lab">
 
-  <div class="section-title">Labels</div>
+  <div class="section-title">Labels & Units</div>
+
   <div class="label-row">
-    <input type="text" placeholder="Input label (e.g. Shoe Size)" />
+    <input type="text" placeholder="Input label" />
+
+    <select onchange="updateUnits(this, 'inputUnit')">
+      <option value="">Unit type</option>
+      <option value="count">Count</option>
+      <option value="length">Length</option>
+      <option value="mass">Mass</option>
+      <option value="force">Force</option>
+    </select>
+
     <div class="arrow">→</div>
-    <input type="text" placeholder="Output label (e.g. Height)" />
+
+    <input type="text" placeholder="Output label" />
+
+    <select id="inputUnit">
+      <option value="">Unit</option>
+    </select>
   </div>
 
   <div class="section-title">Data Points</div>
@@ -219,23 +213,38 @@ header a {
 </section>
 
 <div class="note">
-Relationship Lab is designed for exploratory numerical experiments.
-Labels help contextualize relationships without enforcing domain assumptions.
+Units provide context for numerical relationships without enforcing interpretation.
 </div>
 
 <script>
+const unitMap = {
+  count: ["count", "items"],
+  length: ["mm", "cm", "m", "km"],
+  mass: ["g", "kg", "t"],
+  force: ["N", "kN"]
+};
+
+function updateUnits(select, targetId) {
+  const unitSelect = document.getElementById(targetId);
+  unitSelect.innerHTML = '<option value="">Unit</option>';
+  const units = unitMap[select.value] || [];
+  units.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u;
+    opt.textContent = u;
+    unitSelect.appendChild(opt);
+  });
+}
+
 function addRow() {
   const rows = document.getElementById("rows");
-
   const row = document.createElement("div");
   row.className = "data-row";
-
   row.innerHTML = `
     <input type="number" placeholder="Input value" />
     <div class="arrow">→</div>
     <input type="number" placeholder="Output value" />
   `;
-
   rows.appendChild(row);
 }
 </script>
