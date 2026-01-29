@@ -1,58 +1,51 @@
-import numpy as np
+import math
+import random
 
 class DeepCoreModel:
-    def __init__(self, input_dim, lr=0.1):
-        self.w = np.random.randn(input_dim)
-        self.b = np.random.randn()
+    def __init__(self, lr=0.1):
         self.lr = lr
+        self.eps = 1e-8
 
-        self.Gw = np.zeros_like(self.w)
-        self.Gb = 0.0
+    def train(self, X, y, epochs=50):
+        n_samples = len(X)
+        n_features = len(X[0])
 
-        self.history = []
+        w = [0.0] * n_features
+        b = 0.0
 
-    def predict(self, X):
-        return X @ self.w + self.b
+        gw2 = [0.0] * n_features
+        gb2 = 0.0
 
-    def loss(self, y_pred, y):
-        return np.mean((y_pred - y) ** 2)
+        history = []
 
-    def train_step(self, X, y):
-        y_pred = self.predict(X)
-        loss = self.loss(y_pred, y)
+        for epoch in range(1, epochs + 1):
+            total_loss = 0.0
+            dw = [0.0] * n_features
+            db = 0.0
 
-        grad_w = 2 * np.mean((y_pred - y)[:, None] * X, axis=0)
-        grad_b = 2 * np.mean(y_pred - y)
+            for i in range(n_samples):
+                pred = sum(w[j] * X[i][j] for j in range(n_features)) + b
+                err = pred - y[i]
+                total_loss += err ** 2
 
-        # Adagrad
-        self.Gw += grad_w ** 2
-        self.Gb += grad_b ** 2
+                for j in range(n_features):
+                    dw[j] += err * X[i][j]
+                db += err
 
-        self.w -= self.lr * grad_w / (np.sqrt(self.Gw) + 1e-8)
-        self.b -= self.lr * grad_b / (np.sqrt(self.Gb) + 1e-8)
+            loss = total_loss / n_samples
 
-        self.history.append({
-            "loss": float(loss),
-            "w": self.w.tolist(),
-            "b": float(self.b)
-        })
+            for j in range(n_features):
+                gw2[j] += dw[j] ** 2
+                w[j] -= self.lr * dw[j] / math.sqrt(gw2[j] + self.eps)
 
-        return loss
+            gb2 += db ** 2
+            b -= self.lr * db / math.sqrt(gb2 + self.eps)
 
-    def loss_surface(self, X, y, grid=20):
-        w_range = np.linspace(self.w[0] - 2, self.w[0] + 2, grid)
-        b_range = np.linspace(self.b - 2, self.b + 2, grid)
+            history.append({
+                "epoch": epoch,
+                "loss": loss,
+                "weights": w[:],
+                "bias": b
+            })
 
-        Z = []
-        for w in w_range:
-            row = []
-            for b in b_range:
-                y_pred = X[:, 0] * w + b
-                row.append(float(self.loss(y_pred, y)))
-            Z.append(row)
-
-        return {
-            "w": w_range.tolist(),
-            "b": b_range.tolist(),
-            "loss": Z
-        }
+        return history
