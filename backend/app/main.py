@@ -1,65 +1,59 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import uuid, time, json
-import numpy as np
-
+from typing import List, Dict
 from backend.models.deepcore import DeepCoreModel
 
-app = FastAPI()
+app = FastAPI(title="PRIZUX Deep Core")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
-SESSIONS = {}
+# 간단 버전: 세션별 모델
+MODELS: Dict[str, DeepCoreModel] = {}
 
 class TrainRequest(BaseModel):
     session_id: str
-    X: list
-    y: list
-    epochs: int = 50
-    lr: float = 0.1
+    X: List[List[float]]
+    Y: List[float]
+    epochs: int = 100
 
-@app.post("/train")
+class PredictRequest(BaseModel):
+    session_id: str
+    x: List[float]
+
+@app.post("/api/train")
 def train(req: TrainRequest):
-    X = np.array(req.X, dtype=float)
-    y = np.array(req.y, dtype=float)
+    model = MODELS.get(req.session_id)
+    if model is None:
+        model = DeepCoreModel()
+        MODELS[req.session_id] = model
 
-    model = DeepCoreModel(X.shape[1], req.lr)
-    SESSIONS[req.session_id] = {
-        "model": model,
-        "X": X,
-        "y": y,
-        "epochs": req.epochs
+    info = model.train(req.X, req.Y, req.epochs)
+
+    return {
+        "status": "trained",
+        "loss_history": model.loss_history,
+        "trajectory": model.trajectory,
+        **info
     }
-    return {"status": "started"}
 
-@app.get("/train-stream")
-def stream(session_id: str):
-    def gen():
-        s = SESSIONS[session_id]
-        model = s["model"]
-        X, y = s["X"], s["y"]
+@app.post("/api/predict")
+def predict(req: PredictRequest):
+    model = MODELS.get(req.session_id)
+    if not model or not model.trained:
+        raise HTTPException(400, "Model not trained")
 
-        for epoch in range(s["epochs"]):
-            loss = model.train_step(X, y)
+    y = model.predict(req.x)
 
-            payload = {
-                "epoch": epoch + 1,
-                "loss": loss,
-                "weights": model.w.tolist(),
-                "bias": model.b,
-                "surface": model.loss_surface(X, y)
-            }
+    return {
+        "prediction": y,
+        "weights": model.w,
+        "bias": model.b
+    }
 
-            yield f"data:{json.dumps(payload)}\n\n"
-            time.sleep(0.1)
-
-        yield f"data:{json.dumps({'done': True})}\n\n"
-
-    return StreamingResponse(gen(), media_type="text/event-stream")
+@app.get("/api/status/{session_id}")
+def status(session_id: str):
+    model = MODELS.get(session_id)
+    if not model:
+        return {"exists": False}
+    return {
+        "trained": model.trained,
+        "loss": model.loss_history
+    }
