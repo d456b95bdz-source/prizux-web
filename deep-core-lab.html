@@ -1,225 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>PRIZUX Deep Core Lab</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  padding: 80px 10%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #fff;
-  color: #111;
-}
-
-h1 {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-p {
-  color: #555;
-  max-width: 900px;
-  line-height: 1.6;
-}
-
-.section {
-  margin-top: 60px;
-}
-
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-textarea {
-  width: 100%;
-  min-height: 140px;
-  font-family: monospace;
-  font-size: 15px;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  resize: vertical;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: #111;
-}
-
-button {
-  margin-top: 24px;
-  padding: 14px 28px;
-  border-radius: 999px;
-  border: none;
-  background: #111;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-.progress-wrap {
-  margin-top: 30px;
-}
-
-.progress {
-  height: 10px;
-  border-radius: 999px;
-  background: #eee;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #00c853, #ff5252);
-  transition: width 0.2s ease;
-}
-
-#status {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #444;
-}
-
-.warning {
-  color: #d32f2f;
-  margin-top: 10px;
-  font-weight: 600;
-}
+body { font-family:-apple-system; padding:60px 10%; }
+.card { border:1px solid #eee; border-radius:20px; padding:30px; margin-bottom:40px; }
+input { padding:10px; width:90px; margin-right:6px; }
+button { padding:12px 24px; border-radius:999px; background:#111; color:#fff; border:none; }
+.progress { height:8px; background:#eee; border-radius:6px; overflow:hidden; }
+.bar { height:100%; width:0%; background:#4F46E5; }
 </style>
 </head>
 
 <body>
 
-<h1>Deep Core Lab</h1>
-<p>
-Deep Core learns numerical relationships.<br>
-X values are the inputs you give to the AI, and Y values are the results you want it to predict.
-</p>
+<h1>Deep Core Relationship Lab</h1>
 
-<p>
-<b>Input format:</b><br>
-Each line is one data sample.<br>
-X supports multiple values per row (space separated).<br>
-Y must have exactly the same number of lines as X.
-</p>
-
-<p>
-<b>Example:</b><br>
-If you want to predict <b>height</b> using <b>foot size</b> and <b>hand size</b>:
-</p>
-
-<pre>
-X:
-26 18
-27 19
-28 20
-
-Y:
-170
-175
-180
-</pre>
-
-<div class="section">
-  <label>X Data (inputs)</label>
-  <textarea id="x" oninput="numericOnly(this)">
-26 18
-27 19
-28 20
-  </textarea>
+<div class="card">
+<h3>Training Data</h3>
+<div id="rows"></div>
+<button onclick="addRow()">+ Add X row</button>
+<br><br>
+<label>Y value per row</label>
+<input type="number" id="yval">
 </div>
 
-<div class="section">
-  <label>Y Data (outputs)</label>
-  <textarea id="y" oninput="numericOnly(this)">
-170
-175
-180
-  </textarea>
+<div class="card">
+<label>Epochs</label>
+<input type="number" id="epochs" value="100">
+<button onclick="train()">Train</button>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="loss"></p>
 </div>
 
-<div id="warn" class="warning"></div>
-
-<button onclick="train()">Train Model</button>
-
-<div class="progress-wrap">
-  <div class="progress">
-    <div id="bar" class="progress-bar"></div>
-  </div>
-  <div id="status">Idle</div>
+<div class="card">
+<h3>Predict</h3>
+<div id="predictX"></div>
+<button onclick="predict()">Predict</button>
+<h2 id="result"></h2>
 </div>
+
+<div id="plot" style="height:500px;"></div>
 
 <script>
-/* 숫자만 허용 */
-function numericOnly(el) {
-  el.value = el.value.replace(/[^0-9.\-\s\n]/g, "");
+const API = "/api";
+const session = Math.random().toString(36).slice(2);
+
+function addRow(){
+  const row = document.createElement("div");
+  row.innerHTML = `
+    <input type="number" class="x">
+    <input type="number" class="x">
+  `;
+  document.getElementById("rows").appendChild(row);
 }
 
-/* 파싱 */
-function parse(text) {
-  return text.trim().split("\n").map(row =>
-    row.trim().split(/\s+/).map(Number)
-  );
+function collectX(){
+  return [...document.querySelectorAll("#rows div")]
+    .map(r=>[...r.querySelectorAll(".x")].map(i=>Number(i.value)));
 }
 
-/* 학습 */
-async function train() {
-  const warn = document.getElementById("warn");
-  warn.textContent = "";
+async function train(){
+  const X = collectX();
+  const Y = X.map(()=>Number(yval.value));
 
-  const X = parse(document.getElementById("x").value);
-  const y = parse(document.getElementById("y").value).flat();
-
-  if (X.length === 0 || y.length === 0) {
-    warn.textContent = "X and Y must not be empty.";
-    return;
-  }
-
-  if (X.length !== y.length) {
-    warn.textContent =
-      `Data mismatch: X has ${X.length} rows but Y has ${y.length} values.`;
-    return;
-  }
-
-  document.getElementById("status").textContent = "Training started…";
-  document.getElementById("bar").style.width = "0%";
-
-  const res = await fetch("/api/train", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      X: X,
-      y: y,
-      epochs: 200
-    })
+  const res = await fetch(API+"/train",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id:session,X,Y,epochs:Number(epochs.value)})
   });
 
-  const reader = res.body.getReader();
-  let received = 0;
+  const data = await res.json();
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  Plotly.newPlot("plot",[{
+    x:data.loss_history.map((_,i)=>i),
+    y:data.loss_history,
+    type:"scatter"
+  }]);
+}
 
-    received++;
-    const progress = Math.min(received / 200 * 100, 100);
-    document.getElementById("bar").style.width = progress + "%";
-    document.getElementById("status").textContent =
-      `Epoch ${received} / 200 running…`;
-  }
+function predict(){
+  const x = [...document.querySelectorAll("#rows div")[0]
+    .querySelectorAll(".x")].map(i=>Number(i.value));
 
-  document.getElementById("status").textContent =
-    "Training completed successfully.";
+  fetch(API+"/predict",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({session_id:session,x})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    result.innerText = "Prediction: " + d.prediction.toFixed(4);
+  });
 }
 </script>
 
