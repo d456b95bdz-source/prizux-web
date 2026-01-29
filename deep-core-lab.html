@@ -1,90 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>DeepCore Lab</title>
-<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<meta charset="UTF-8">
+<title>PRIZUX Deep Core Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { font-family: sans-serif; padding: 40px; }
-textarea { width: 100%; height: 120px; }
-button { padding: 12px 20px; }
-#log { margin-top: 20px; }
+body {
+  margin: 0;
+  padding: 80px 10%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #fff;
+  color: #111;
+}
+
+h1 {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+p {
+  color: #555;
+  max-width: 900px;
+  line-height: 1.6;
+}
+
+.section {
+  margin-top: 60px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 140px;
+  font-family: monospace;
+  font-size: 15px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #111;
+}
+
+button {
+  margin-top: 24px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.progress-wrap {
+  margin-top: 30px;
+}
+
+.progress {
+  height: 10px;
+  border-radius: 999px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00c853, #ff5252);
+  transition: width 0.2s ease;
+}
+
+#status {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #444;
+}
+
+.warning {
+  color: #d32f2f;
+  margin-top: 10px;
+  font-weight: 600;
+}
 </style>
 </head>
 
 <body>
 
-<h1>DeepCore Lab</h1>
-
+<h1>Deep Core Lab</h1>
 <p>
-X 데이터는 예측에 사용하는 값, Y는 결과 값입니다.<br>
-예시: 발사이즈·손크기 → 키 예측
+Deep Core learns numerical relationships.<br>
+X values are the inputs you give to the AI, and Y values are the results you want it to predict.
 </p>
 
-<label>X (한 줄에 하나, 공백 구분)</label>
-<textarea id="x">
-25 18
-26 19
-27 20
-</textarea>
+<p>
+<b>Input format:</b><br>
+Each line is one data sample.<br>
+X supports multiple values per row (space separated).<br>
+Y must have exactly the same number of lines as X.
+</p>
 
-<label>Y</label>
-<textarea id="y">
+<p>
+<b>Example:</b><br>
+If you want to predict <b>height</b> using <b>foot size</b> and <b>hand size</b>:
+</p>
+
+<pre>
+X:
+26 18
+27 19
+28 20
+
+Y:
 170
 175
 180
-</textarea>
+</pre>
 
-<button onclick="start()">Train</button>
+<div class="section">
+  <label>X Data (inputs)</label>
+  <textarea id="x" oninput="numericOnly(this)">
+26 18
+27 19
+28 20
+  </textarea>
+</div>
 
-<div id="log"></div>
-<div id="loss"></div>
-<div id="surface"></div>
+<div class="section">
+  <label>Y Data (outputs)</label>
+  <textarea id="y" oninput="numericOnly(this)">
+170
+175
+180
+  </textarea>
+</div>
+
+<div id="warn" class="warning"></div>
+
+<button onclick="train()">Train Model</button>
+
+<div class="progress-wrap">
+  <div class="progress">
+    <div id="bar" class="progress-bar"></div>
+  </div>
+  <div id="status">Idle</div>
+</div>
 
 <script>
-const API = "https://api.prizux.com"; // ← 반드시 서버 주소
+/* 숫자만 허용 */
+function numericOnly(el) {
+  el.value = el.value.replace(/[^0-9.\-\s\n]/g, "");
+}
 
+/* 파싱 */
 function parse(text) {
-  return text.trim().split("\n").map(
-    r => r.trim().split(/\s+/).map(Number)
+  return text.trim().split("\n").map(row =>
+    row.trim().split(/\s+/).map(Number)
   );
 }
 
-function start() {
-  const X = parse(x.value);
-  const y = parse(y.value).flat();
+/* 학습 */
+async function train() {
+  const warn = document.getElementById("warn");
+  warn.textContent = "";
 
-  const sid = crypto.randomUUID();
+  const X = parse(document.getElementById("x").value);
+  const y = parse(document.getElementById("y").value).flat();
 
-  fetch(`${API}/train`, {
+  if (X.length === 0 || y.length === 0) {
+    warn.textContent = "X and Y must not be empty.";
+    return;
+  }
+
+  if (X.length !== y.length) {
+    warn.textContent =
+      `Data mismatch: X has ${X.length} rows but Y has ${y.length} values.`;
+    return;
+  }
+
+  document.getElementById("status").textContent = "Training started…";
+  document.getElementById("bar").style.width = "0%";
+
+  const res = await fetch("/api/train", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({ session_id: sid, X, y, epochs: 50 })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      X: X,
+      y: y,
+      epochs: 200
+    })
   });
 
-  const es = new EventSource(`${API}/train-stream?session_id=${sid}`);
+  const reader = res.body.getReader();
+  let received = 0;
 
-  es.onmessage = e => {
-    const d = JSON.parse(e.data);
-    if (d.done) {
-      log.innerHTML += "<b>Training complete</b>";
-      es.close();
-      return;
-    }
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
 
-    log.innerHTML = `Epoch ${d.epoch} | Loss ${d.loss.toFixed(4)}`;
+    received++;
+    const progress = Math.min(received / 200 * 100, 100);
+    document.getElementById("bar").style.width = progress + "%";
+    document.getElementById("status").textContent =
+      `Epoch ${received} / 200 running…`;
+  }
 
-    Plotly.newPlot("loss", [{
-      y: [d.loss], mode:"lines+markers"
-    }]);
-
-    Plotly.newPlot("surface", [{
-      z: d.surface.loss,
-      x: d.surface.w,
-      y: d.surface.b,
-      type: "surface"
-    }]);
-  };
+  document.getElementById("status").textContent =
+    "Training completed successfully.";
 }
 </script>
 
