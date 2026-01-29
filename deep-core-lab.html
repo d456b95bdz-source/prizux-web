@@ -1,48 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>PRIZUX Deep Core Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont;
   padding: 60px 10%;
+  background: #fff;
+  color: #111;
 }
 
-.card {
-  border: 1px solid #eee;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-}
+h1 { font-size: 48px; }
 
-input {
-  padding: 10px;
-  width: 100px;
-  margin-right: 6px;
+.controls {
+  margin-bottom: 30px;
 }
 
 button {
-  padding: 12px 24px;
+  padding: 12px 22px;
   border-radius: 999px;
+  border: none;
   background: #111;
   color: white;
-  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button.secondary {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeIn .25s ease;
+}
+
+input {
+  width: 80px;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.label {
+  font-size: 13px;
+  color: #666;
 }
 
 .progress {
+  margin-top: 20px;
   height: 10px;
   background: #eee;
   border-radius: 5px;
-  margin-top: 20px;
+  overflow: hidden;
 }
 
 .bar {
   height: 100%;
   width: 0%;
   background: #4F46E5;
+  transition: width .4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -51,67 +90,115 @@ button {
 
 <h1>Deep Core Lab</h1>
 
-<div id="data"></div>
-<button onclick="addRow()">+ Add Row</button>
+<div class="controls">
+  <button onclick="addX()">+ Add X Dimension</button>
+  <button class="secondary" onclick="addRow()">+ Add Row</button>
+  <button onclick="train()">Train</button>
+</div>
 
-<br><br>
-<button onclick="train()">Train</button>
+<div id="rows"></div>
 
-<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="progress">
+  <div class="bar" id="bar"></div>
+</div>
 
-<div id="chart" style="height:400px;"></div>
-<div id="loss3d" style="height:500px;"></div>
+<div id="lossChart" style="height:300px;margin-top:40px;"></div>
+<div id="loss3d" style="height:450px;margin-top:40px;"></div>
 
 <script>
 const API = location.origin;
-let rows = [];
 
-function addRow() {
-  const div = document.createElement("div");
-  div.className = "card";
-  div.innerHTML = `
-    X: <input type="number"> <input type="number">
-    Y: <input type="number">
-  `;
-  document.getElementById("data").appendChild(div);
+let xDim = 1;
+let rowCount = 0;
+
+/* ===== Row Creation ===== */
+function createRow() {
+  const row = document.createElement("div");
+  row.className = "card";
+
+  for (let i = 0; i < xDim; i++) {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.placeholder = "X" + (i+1);
+    row.appendChild(input);
+  }
+
+  const arrow = document.createElement("span");
+  arrow.textContent = "→";
+  arrow.className = "label";
+  row.appendChild(arrow);
+
+  const y = document.createElement("input");
+  y.type = "number";
+  y.placeholder = "Y";
+  row.appendChild(y);
+
+  document.getElementById("rows").appendChild(row);
+  rowCount++;
 }
 
-async function train() {
-  const cards = document.querySelectorAll(".card");
-  let X = [], Y = [];
+/* ===== Add X Dimension ===== */
+function addX() {
+  xDim++;
 
-  cards.forEach(c => {
-    const inputs = c.querySelectorAll("input");
-    X.push([Number(inputs[0].value), Number(inputs[1].value)]);
-    Y.push(Number(inputs[2].value));
+  document.querySelectorAll(".card").forEach(row => {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.placeholder = "X" + xDim;
+    row.insertBefore(input, row.lastElementChild.previousSibling);
+  });
+}
+
+/* ===== Add Row ===== */
+function addRow() {
+  createRow();
+}
+
+/* ===== Train ===== */
+async function train() {
+  const X = [];
+  const Y = [];
+
+  document.querySelectorAll(".card").forEach(row => {
+    const inputs = row.querySelectorAll("input");
+    const xs = [];
+    for (let i = 0; i < xDim; i++) {
+      xs.push(Number(inputs[i].value));
+    }
+    X.push(xs);
+    Y.push(Number(inputs[xDim].value));
   });
 
-  let bar = document.getElementById("bar");
-  bar.style.width = "30%";
+  const bar = document.getElementById("bar");
+  bar.style.width = "20%";
 
   const res = await fetch(API + "/api/train", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({X, Y})
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ X, Y })
   });
 
   const data = await res.json();
   bar.style.width = "100%";
 
-  Plotly.newPlot("chart", [{
+  Plotly.newPlot("lossChart", [{
     y: data.loss_history,
-    type: "scatter"
+    type: "scatter",
+    line: { color: "#4F46E5" }
   }]);
 
-  const traj = data.trajectory;
   Plotly.newPlot("loss3d", [{
-    x: traj.map(t => t.w),
-    y: traj.map(t => t.b),
-    z: traj.map(t => t.loss),
+    x: data.trajectory.map(t => t.w),
+    y: data.trajectory.map(t => t.b),
+    z: data.trajectory.map(t => t.loss),
     mode: "lines+markers",
-    type: "scatter3d"
+    type: "scatter3d",
+    marker: { size: 3 }
   }]);
 }
+
+/* initial row */
+createRow();
 </script>
 
 </body>
