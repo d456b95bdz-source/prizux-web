@@ -3,98 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <title>PRIZUX Deep Core Lab</title>
-<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
-body { font-family:-apple-system; padding:60px 10%; }
-.card { border:1px solid #eee; border-radius:20px; padding:30px; margin-bottom:40px; }
-input { padding:10px; width:90px; margin-right:6px; }
-button { padding:12px 24px; border-radius:999px; background:#111; color:#fff; border:none; }
-.progress { height:8px; background:#eee; border-radius:6px; overflow:hidden; }
-.bar { height:100%; width:0%; background:#4F46E5; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  padding: 60px 10%;
+}
+
+.card {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+input {
+  padding: 10px;
+  width: 100px;
+  margin-right: 6px;
+}
+
+button {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: #111;
+  color: white;
+  border: none;
+}
+
+.progress {
+  height: 10px;
+  background: #eee;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #4F46E5;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Deep Core Relationship Lab</h1>
+<h1>Deep Core Lab</h1>
 
-<div class="card">
-<h3>Training Data</h3>
-<div id="rows"></div>
-<button onclick="addRow()">+ Add X row</button>
+<div id="data"></div>
+<button onclick="addRow()">+ Add Row</button>
+
 <br><br>
-<label>Y value per row</label>
-<input type="number" id="yval">
-</div>
-
-<div class="card">
-<label>Epochs</label>
-<input type="number" id="epochs" value="100">
 <button onclick="train()">Train</button>
+
 <div class="progress"><div class="bar" id="bar"></div></div>
-<p id="loss"></p>
-</div>
 
-<div class="card">
-<h3>Predict</h3>
-<div id="predictX"></div>
-<button onclick="predict()">Predict</button>
-<h2 id="result"></h2>
-</div>
-
-<div id="plot" style="height:500px;"></div>
+<div id="chart" style="height:400px;"></div>
+<div id="loss3d" style="height:500px;"></div>
 
 <script>
-const API = "/api";
-const session = Math.random().toString(36).slice(2);
+const API = location.origin;
+let rows = [];
 
-function addRow(){
-  const row = document.createElement("div");
-  row.innerHTML = `
-    <input type="number" class="x">
-    <input type="number" class="x">
+function addRow() {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML = `
+    X: <input type="number"> <input type="number">
+    Y: <input type="number">
   `;
-  document.getElementById("rows").appendChild(row);
+  document.getElementById("data").appendChild(div);
 }
 
-function collectX(){
-  return [...document.querySelectorAll("#rows div")]
-    .map(r=>[...r.querySelectorAll(".x")].map(i=>Number(i.value)));
-}
+async function train() {
+  const cards = document.querySelectorAll(".card");
+  let X = [], Y = [];
 
-async function train(){
-  const X = collectX();
-  const Y = X.map(()=>Number(yval.value));
+  cards.forEach(c => {
+    const inputs = c.querySelectorAll("input");
+    X.push([Number(inputs[0].value), Number(inputs[1].value)]);
+    Y.push(Number(inputs[2].value));
+  });
 
-  const res = await fetch(API+"/train",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id:session,X,Y,epochs:Number(epochs.value)})
+  let bar = document.getElementById("bar");
+  bar.style.width = "30%";
+
+  const res = await fetch(API + "/api/train", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({X, Y})
   });
 
   const data = await res.json();
+  bar.style.width = "100%";
 
-  Plotly.newPlot("plot",[{
-    x:data.loss_history.map((_,i)=>i),
-    y:data.loss_history,
-    type:"scatter"
+  Plotly.newPlot("chart", [{
+    y: data.loss_history,
+    type: "scatter"
   }]);
-}
 
-function predict(){
-  const x = [...document.querySelectorAll("#rows div")[0]
-    .querySelectorAll(".x")].map(i=>Number(i.value));
-
-  fetch(API+"/predict",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({session_id:session,x})
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    result.innerText = "Prediction: " + d.prediction.toFixed(4);
-  });
+  const traj = data.trajectory;
+  Plotly.newPlot("loss3d", [{
+    x: traj.map(t => t.w),
+    y: traj.map(t => t.b),
+    z: traj.map(t => t.loss),
+    mode: "lines+markers",
+    type: "scatter3d"
+  }]);
 }
 </script>
 
