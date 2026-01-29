@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ===== BASE ===== */
 body {
   margin: 0;
   padding: 80px 10%;
@@ -14,6 +15,7 @@ body {
   background: #fff;
 }
 
+/* ===== HEADER ===== */
 header {
   display: flex;
   align-items: center;
@@ -29,6 +31,7 @@ header {
   border-radius: 6px;
 }
 
+/* ===== HERO ===== */
 .hero {
   margin-top: 120px;
   max-width: 800px;
@@ -37,14 +40,17 @@ header {
 .hero h1 {
   font-size: 64px;
   line-height: 1.05;
+  font-weight: 600;
 }
 
 .hero p {
   margin-top: 24px;
   font-size: 20px;
   color: #555;
+  line-height: 1.6;
 }
 
+/* ===== ACTION ===== */
 .actions {
   margin-top: 40px;
 }
@@ -56,6 +62,28 @@ header {
   background: #111;
   color: #fff;
   text-decoration: none;
+  font-size: 15px;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.actions a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  body {
+    padding: 60px 8%;
+  }
+
+  .hero h1 {
+    font-size: 48px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
 }
 </style>
 </head>
@@ -72,9 +100,11 @@ header {
     Numerical<br>
     Intelligence
   </h1>
+
   <p>
     PRIZUX is a system that learns numerical relationships.<br>
-    PRIZUX brought technology innovation that has never been seen in the previous numercial AI.
+    PRIZUX introduces a new approach to learning numerical relationships,
+    beyond conventional numerical AI systems.
   </p>
 
   <div class="actions">
