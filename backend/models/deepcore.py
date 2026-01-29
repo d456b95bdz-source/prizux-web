@@ -1,51 +1,83 @@
 import math
-import random
+from typing import List, Dict
 
 class DeepCoreModel:
-    def __init__(self, lr=0.1):
-        self.lr = lr
+    def __init__(self):
+        self.w: List[float] = []
+        self.b: float = 0.0
+        self.trained = False
+
+        # education용 기록
+        self.loss_history = []
+        self.trajectory = []
+
+        # Adagrad
+        self.gw = []
+        self.gb = 0.0
+        self.lr = 0.1
         self.eps = 1e-8
 
-    def train(self, X, y, epochs=50):
-        n_samples = len(X)
-        n_features = len(X[0])
+    def _init_params(self, dim: int):
+        self.w = [0.0] * dim
+        self.gw = [0.0] * dim
+        self.b = 0.0
+        self.gb = 0.0
 
-        w = [0.0] * n_features
-        b = 0.0
+    def predict(self, x: List[float]) -> float:
+        return sum(self.w[i] * x[i] for i in range(len(x))) + self.b
 
-        gw2 = [0.0] * n_features
-        gb2 = 0.0
+    def train(
+        self,
+        X: List[List[float]],
+        Y: List[float],
+        epochs: int = 100
+    ) -> Dict:
 
-        history = []
+        if len(X) == 0 or len(X) != len(Y):
+            raise ValueError("X rows and Y length must match")
 
-        for epoch in range(1, epochs + 1):
-            total_loss = 0.0
-            dw = [0.0] * n_features
+        dim = len(X[0])
+        for row in X:
+            if len(row) != dim:
+                raise ValueError("All X rows must have same length")
+
+        self._init_params(dim)
+        n = len(X)
+
+        for epoch in range(epochs):
+            dw = [0.0] * dim
             db = 0.0
+            loss = 0.0
 
-            for i in range(n_samples):
-                pred = sum(w[j] * X[i][j] for j in range(n_features)) + b
-                err = pred - y[i]
-                total_loss += err ** 2
+            for i in range(n):
+                y_pred = self.predict(X[i])
+                err = y_pred - Y[i]
+                loss += err ** 2
 
-                for j in range(n_features):
+                for j in range(dim):
                     dw[j] += err * X[i][j]
                 db += err
 
-            loss = total_loss / n_samples
+            loss /= n
+            self.loss_history.append(loss)
 
-            for j in range(n_features):
-                gw2[j] += dw[j] ** 2
-                w[j] -= self.lr * dw[j] / math.sqrt(gw2[j] + self.eps)
+            for j in range(dim):
+                self.gw[j] += dw[j] ** 2
+                self.w[j] -= (self.lr / math.sqrt(self.gw[j] + self.eps)) * dw[j]
 
-            gb2 += db ** 2
-            b -= self.lr * db / math.sqrt(gb2 + self.eps)
+            self.gb += db ** 2
+            self.b -= (self.lr / math.sqrt(self.gb + self.eps)) * db
 
-            history.append({
+            self.trajectory.append({
                 "epoch": epoch,
-                "loss": loss,
-                "weights": w[:],
-                "bias": b
+                "w": self.w.copy(),
+                "b": self.b,
+                "loss": loss
             })
 
-        return history
+        self.trained = True
+
+        return {
+            "epochs": epochs,
+            "final_loss": self.loss_history[-1]
+        }
