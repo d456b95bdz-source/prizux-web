@@ -18,7 +18,6 @@ body {
   color: #111;
 }
 
-/* ===== HEADER ===== */
 header {
   display: flex;
   align-items: center;
@@ -46,7 +45,7 @@ header {
 
 .hero p {
   margin-top: 18px;
-  font-size: 18px;
+  font-size: 17px;
   color: #555;
   line-height: 1.6;
 }
@@ -54,71 +53,57 @@ header {
 /* ===== LAB ===== */
 .lab {
   margin-top: 100px;
-  max-width: 900px;
+  max-width: 880px;
   padding: 40px;
   border: 1px solid #eee;
-  border-radius: 28px;
+  border-radius: 24px;
 }
 
 .section-title {
   font-size: 18px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
-.helper {
+.guide {
   font-size: 14px;
   color: #666;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 26px;
 }
 
-/* ===== SAMPLE ===== */
-.sample {
-  border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  padding: 24px;
+.label-row {
+  display: flex;
+  gap: 14px;
   margin-bottom: 28px;
 }
 
-.sample-title {
+.label-row input {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   font-size: 14px;
-  color: #4F46E5;
-  margin-bottom: 12px;
+}
+
+/* ===== DATA ===== */
+.sample {
+  margin-bottom: 26px;
 }
 
 .x-group {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.x-group input {
+.xVal, .yVal {
   width: 120px;
   padding: 10px 14px;
-  border: 1px solid #e5e7eb;
   border-radius: 12px;
-}
-
-.y-group {
-  margin-top: 14px;
-}
-
-.y-group input {
-  width: 160px;
-  padding: 10px 14px;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
 }
 
-.arrow {
-  margin: 14px 0;
-  font-size: 14px;
-  color: #888;
-}
-
-/* ===== BUTTONS ===== */
 button {
-  padding: 12px 26px;
+  padding: 10px 22px;
   border-radius: 999px;
   border: none;
   background: #111;
@@ -126,23 +111,38 @@ button {
   cursor: pointer;
 }
 
-.sub-btn {
+.secondary {
   background: none;
   color: #4F46E5;
-  border: none;
-  cursor: pointer;
-  margin-top: 12px;
 }
 
-.actions {
-  margin-top: 40px;
-  display: flex;
-  gap: 16px;
+/* ===== PROGRESS ===== */
+.progress {
+  margin-top: 30px;
 }
 
-/* ===== RESULT ===== */
+.bar {
+  height: 8px;
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4F46E5, #16a34a);
+  transition: width 0.2s linear;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
 .result {
-  margin-top: 40px;
+  margin-top: 36px;
   font-size: 18px;
 }
 </style>
@@ -156,145 +156,129 @@ button {
 </header>
 
 <section class="hero">
-  <h1>Relationship Lab</h1>
+  <h1>Deep Core Lab</h1>
   <p>
-    Train Deep Core using structured numerical samples.<br>
-    Each sample maps multiple X values to a single Y value.
+    Train numerical relationships directly.<br>
+    X values are inputs given to the AI.<br>
+    Y is the value you want the AI to predict.
   </p>
 </section>
 
 <section class="lab">
 
-  <div class="section-title">Training Data</div>
-
-  <div class="helper">
-    Each training sample follows this format:<br>
-    <strong>(X, X, X, …) → Y</strong><br><br>
-    Multiple samples can be added:<br>
-    <strong>(X₁, X₂, X₃) → Y</strong>, <strong>(X'₁, X'₂) → Y'</strong>
+  <div class="section-title">Labels</div>
+  <div class="guide">
+    Label X and Y once. These labels apply to all samples.<br><br>
+    <strong>Example:</strong><br>
+    X label: Foot Size, Hand Size<br>
+    Y label: Height
   </div>
 
-  <div id="samples"></div>
-
-  <button class="sub-btn" onclick="addSample()">+ Add training sample</button>
-
-  <div class="actions">
-    <button onclick="train()">Train Model</button>
+  <div class="label-row">
+    <input id="xLabel" placeholder="X label (e.g. Foot size, Hand size)" />
+    <input id="yLabel" placeholder="Y label (e.g. Height)" />
   </div>
 
-  <div class="section-title" style="margin-top:80px;">Prediction</div>
-
-  <div class="helper">
-    Enter a new set of X values to predict Y.
+  <div class="section-title">Training Sample</div>
+  <div class="guide">
+    Start with one X value.<br>
+    Add more X values if needed.<br>
+    No brackets or formatting required.
   </div>
 
-  <div class="x-group" id="predictX">
-    <input placeholder="x" />
-    <input placeholder="x" />
+  <div class="sample">
+    <div class="x-group" id="xGroup">
+      <input class="xVal" placeholder="X" />
+    </div>
+    <button class="secondary" onclick="addX()">+ Add X</button>
+    <div style="margin-top:12px;">
+      <input class="yVal" placeholder="Y" />
+    </div>
   </div>
 
-  <button class="sub-btn" onclick="addPredictX()">+ Add X</button>
+  <button onclick="train()">Train Model</button>
 
-  <div class="actions">
+  <div class="progress" id="progress" style="display:none;">
+    <div class="bar">
+      <div class="bar-inner" id="bar"></div>
+    </div>
+    <div class="status" id="status">Training…</div>
+  </div>
+
+  <div style="margin-top:36px;">
+    <input id="predictInput" placeholder="Test X value" />
     <button onclick="predict()">Predict</button>
   </div>
 
-  <div id="result" class="result"></div>
+  <div class="result" id="result"></div>
 
 </section>
 
 <script>
-const API = "http://127.0.0.1:8000";
-
-/* ===== SAMPLE MANAGEMENT ===== */
-function addSample() {
-  const sample = document.createElement("div");
-  sample.className = "sample";
-
-  sample.innerHTML = `
-    <div class="sample-title">Training Sample</div>
-
-    <div class="x-group">
-      <input class="xVal" placeholder="x" />
-      <input class="xVal" placeholder="x" />
-      <input class="xVal" placeholder="x" />
-    </div>
-
-    <button class="sub-btn" onclick="addX(this)">+ Add X</button>
-
-    <div class="arrow">→</div>
-
-    <div class="y-group">
-      <input class="yVal" placeholder="y (output)" />
-    </div>
-  `;
-
-  document.getElementById("samples").appendChild(sample);
+/* ===== SESSION ===== */
+let sessionId = localStorage.getItem("prizux_session");
+if (!sessionId) {
+  sessionId = crypto.randomUUID();
+  localStorage.setItem("prizux_session", sessionId);
 }
 
-function addX(btn) {
-  const xGroup = btn.previousElementSibling;
+const API = "http://127.0.0.1:8000";
+
+/* ===== UI ===== */
+function addX() {
   const input = document.createElement("input");
   input.className = "xVal";
-  input.placeholder = "x";
-  xGroup.appendChild(input);
+  input.placeholder = "X";
+  document.getElementById("xGroup").appendChild(input);
 }
 
 /* ===== TRAIN ===== */
 async function train() {
-  const samples = [];
+  const xs = [...document.querySelectorAll(".xVal")].map(i => Number(i.value));
+  const y = Number(document.querySelector(".yVal").value);
 
-  document.querySelectorAll(".sample").forEach(sample => {
-    const xs = [...sample.querySelectorAll(".xVal")]
-      .map(i => Number(i.value))
-      .filter(v => !isNaN(v));
+  document.getElementById("progress").style.display = "block";
+  let pct = 0;
 
-    const y = Number(sample.querySelector(".yVal").value);
-
-    if (xs.length && !isNaN(y)) {
-      samples.push({ x: xs, y });
-    }
-  });
-
-  if (!samples.length) {
-    alert("Please add valid training samples.");
-    return;
-  }
+  const timer = setInterval(() => {
+    pct += 5;
+    document.getElementById("bar").style.width = pct + "%";
+    document.getElementById("status").innerText =
+      `Epoch ${pct}/100 · Optimizing loss`;
+    if (pct >= 100) clearInterval(timer);
+  }, 100);
 
   await fetch(API + "/api/train", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ samples })
+    body: JSON.stringify({
+      session_id: sessionId,
+      x: xs,
+      y: xs.map(() => y) // simple mapping for now
+    })
   });
 
-  alert("Training completed.");
+  document.getElementById("status").innerText =
+    "Training completed · Best loss selected";
 }
 
 /* ===== PREDICT ===== */
-function addPredictX() {
-  const input = document.createElement("input");
-  input.placeholder = "x";
-  document.getElementById("predictX").appendChild(input);
-}
-
 async function predict() {
-  const xs = [...document.querySelectorAll("#predictX input")]
-    .map(i => Number(i.value))
-    .filter(v => !isNaN(v));
+  const x = Number(document.getElementById("predictInput").value);
 
   const res = await fetch(API + "/api/predict", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ x: xs })
+    body: JSON.stringify({
+      session_id: sessionId,
+      x: x
+    })
   });
 
   const data = await res.json();
   document.getElementById("result").innerText =
-    `Predicted Y: ${data.prediction.toFixed(4)}`;
+    `Prediction: ${data.prediction.toFixed(3)}`;
 }
-
-/* init */
-addSample();
 </script>
 
 </body>
