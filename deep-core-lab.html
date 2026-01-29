@@ -1,283 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>PRIZUX Deep Core — Relationship Lab</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+<meta charset="utf-8">
+<title>DeepCore Lab</title>
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <style>
-* {
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-body {
-  margin: 0;
-  padding: 60px 10% 140px;
-  background: #fff;
-  color: #111;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  letter-spacing: 2px;
-}
-
-.logo {
-  width: 22px;
-  height: 22px;
-  background: #111;
-  border-radius: 6px;
-}
-
-/* ===== HERO ===== */
-.hero {
-  margin-top: 90px;
-  max-width: 760px;
-}
-
-.hero h1 {
-  font-size: 48px;
-}
-
-.hero p {
-  margin-top: 18px;
-  font-size: 17px;
-  color: #555;
-  line-height: 1.6;
-}
-
-/* ===== LAB ===== */
-.lab {
-  margin-top: 100px;
-  max-width: 880px;
-  padding: 40px;
-  border: 1px solid #eee;
-  border-radius: 24px;
-}
-
-.section-title {
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-.guide {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 26px;
-}
-
-.label-row {
-  display: flex;
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.label-row input {
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-/* ===== DATA ===== */
-.sample {
-  margin-bottom: 26px;
-}
-
-.x-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.xVal, .yVal {
-  width: 120px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-}
-
-button {
-  padding: 10px 22px;
-  border-radius: 999px;
-  border: none;
-  background: #111;
-  color: #fff;
-  cursor: pointer;
-}
-
-.secondary {
-  background: none;
-  color: #4F46E5;
-}
-
-/* ===== PROGRESS ===== */
-.progress {
-  margin-top: 30px;
-}
-
-.bar {
-  height: 8px;
-  background: #eee;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.bar-inner {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #4F46E5, #16a34a);
-  transition: width 0.2s linear;
-}
-
-.status {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #666;
-}
-
-.result {
-  margin-top: 36px;
-  font-size: 18px;
-}
+body { font-family: sans-serif; padding: 40px; }
+textarea { width: 100%; height: 120px; }
+button { padding: 12px 20px; }
+#log { margin-top: 20px; }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo"></div>
-  <span>PRIZUX</span>
-</header>
+<h1>DeepCore Lab</h1>
 
-<section class="hero">
-  <h1>Deep Core Lab</h1>
-  <p>
-    Train numerical relationships directly.<br>
-    X values are inputs given to the AI.<br>
-    Y is the value you want the AI to predict.
-  </p>
-</section>
+<p>
+X 데이터는 예측에 사용하는 값, Y는 결과 값입니다.<br>
+예시: 발사이즈·손크기 → 키 예측
+</p>
 
-<section class="lab">
+<label>X (한 줄에 하나, 공백 구분)</label>
+<textarea id="x">
+25 18
+26 19
+27 20
+</textarea>
 
-  <div class="section-title">Labels</div>
-  <div class="guide">
-    Label X and Y once. These labels apply to all samples.<br><br>
-    <strong>Example:</strong><br>
-    X label: Foot Size, Hand Size<br>
-    Y label: Height
-  </div>
+<label>Y</label>
+<textarea id="y">
+170
+175
+180
+</textarea>
 
-  <div class="label-row">
-    <input id="xLabel" placeholder="X label (e.g. Foot size, Hand size)" />
-    <input id="yLabel" placeholder="Y label (e.g. Height)" />
-  </div>
+<button onclick="start()">Train</button>
 
-  <div class="section-title">Training Sample</div>
-  <div class="guide">
-    Start with one X value.<br>
-    Add more X values if needed.<br>
-    No brackets or formatting required.
-  </div>
-
-  <div class="sample">
-    <div class="x-group" id="xGroup">
-      <input class="xVal" placeholder="X" />
-    </div>
-    <button class="secondary" onclick="addX()">+ Add X</button>
-    <div style="margin-top:12px;">
-      <input class="yVal" placeholder="Y" />
-    </div>
-  </div>
-
-  <button onclick="train()">Train Model</button>
-
-  <div class="progress" id="progress" style="display:none;">
-    <div class="bar">
-      <div class="bar-inner" id="bar"></div>
-    </div>
-    <div class="status" id="status">Training…</div>
-  </div>
-
-  <div style="margin-top:36px;">
-    <input id="predictInput" placeholder="Test X value" />
-    <button onclick="predict()">Predict</button>
-  </div>
-
-  <div class="result" id="result"></div>
-
-</section>
+<div id="log"></div>
+<div id="loss"></div>
+<div id="surface"></div>
 
 <script>
-/* ===== SESSION ===== */
-let sessionId = localStorage.getItem("prizux_session");
-if (!sessionId) {
-  sessionId = crypto.randomUUID();
-  localStorage.setItem("prizux_session", sessionId);
+const API = "https://api.prizux.com"; // ← 반드시 서버 주소
+
+function parse(text) {
+  return text.trim().split("\n").map(
+    r => r.trim().split(/\s+/).map(Number)
+  );
 }
 
-const API = "http://127.0.0.1:8000";
+function start() {
+  const X = parse(x.value);
+  const y = parse(y.value).flat();
 
-/* ===== UI ===== */
-function addX() {
-  const input = document.createElement("input");
-  input.className = "xVal";
-  input.placeholder = "X";
-  document.getElementById("xGroup").appendChild(input);
-}
+  const sid = crypto.randomUUID();
 
-/* ===== TRAIN ===== */
-async function train() {
-  const xs = [...document.querySelectorAll(".xVal")].map(i => Number(i.value));
-  const y = Number(document.querySelector(".yVal").value);
-
-  document.getElementById("progress").style.display = "block";
-  let pct = 0;
-
-  const timer = setInterval(() => {
-    pct += 5;
-    document.getElementById("bar").style.width = pct + "%";
-    document.getElementById("status").innerText =
-      `Epoch ${pct}/100 · Optimizing loss`;
-    if (pct >= 100) clearInterval(timer);
-  }, 100);
-
-  await fetch(API + "/api/train", {
+  fetch(`${API}/train`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      session_id: sessionId,
-      x: xs,
-      y: xs.map(() => y) // simple mapping for now
-    })
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ session_id: sid, X, y, epochs: 50 })
   });
 
-  document.getElementById("status").innerText =
-    "Training completed · Best loss selected";
-}
+  const es = new EventSource(`${API}/train-stream?session_id=${sid}`);
 
-/* ===== PREDICT ===== */
-async function predict() {
-  const x = Number(document.getElementById("predictInput").value);
+  es.onmessage = e => {
+    const d = JSON.parse(e.data);
+    if (d.done) {
+      log.innerHTML += "<b>Training complete</b>";
+      es.close();
+      return;
+    }
 
-  const res = await fetch(API + "/api/predict", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      session_id: sessionId,
-      x: x
-    })
-  });
+    log.innerHTML = `Epoch ${d.epoch} | Loss ${d.loss.toFixed(4)}`;
 
-  const data = await res.json();
-  document.getElementById("result").innerText =
-    `Prediction: ${data.prediction.toFixed(3)}`;
+    Plotly.newPlot("loss", [{
+      y: [d.loss], mode:"lines+markers"
+    }]);
+
+    Plotly.newPlot("surface", [{
+      z: d.surface.loss,
+      x: d.surface.w,
+      y: d.surface.b,
+      type: "surface"
+    }]);
+  };
 }
 </script>
 
