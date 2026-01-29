@@ -1,11 +1,4 @@
-# backend/models/__init__.py
+# backend/app/api/__init__.py
 """
-Model package for PRIZUX.
-
-Available models:
-- DeepCore
+API layer for PRIZUX backend.
 """
-
-from .deepcore import DeepCoreModel
-
-__all__ = ["DeepCoreModel"]
