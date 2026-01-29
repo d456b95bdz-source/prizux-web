@@ -1,73 +1,80 @@
 import numpy as np
+import math
 
 class DeepCoreModel:
-    def __init__(self):
-        self.w = np.random.randn()
-        self.b = np.random.randn()
+    def __init__(self, input_dim, lr=0.1):
+        self.input_dim = input_dim
+        self.lr = lr
 
-        # Adagrad
-        self.gw = 0.0
+        self.w = np.random.uniform(-1, 1, input_dim)
+        self.b = np.random.uniform(-1, 1)
+
+        # Adagrad 누적
+        self.gw = np.zeros(input_dim)
         self.gb = 0.0
-        self.eps = 1e-8
 
-        self.best_w = self.w
-        self.best_b = self.b
-        self.best_loss = float("inf")
-        self.best_epoch = 0
+        # 기록
+        self.loss_history = []
+        self.trajectory = []   # (weights, bias, loss)
 
     def predict(self, x):
-        return self.w * x + self.b
+        return float(np.dot(self.w, x) + self.b)
 
-    def loss(self, y_pred, y):
-        return (y_pred - y) ** 2
+    def loss(self, y_hat, y):
+        return (y_hat - y) ** 2
 
-    def train_step(self, x, y, lr):
-        y_pred = self.predict(x)
-        loss = self.loss(y_pred, y)
+    def train_epoch(self, dataset):
+        total_loss = 0.0
 
-        dw = 2 * (y_pred - y) * x
-        db = 2 * (y_pred - y)
+        for x, y in dataset:
+            x = np.array(x)
+            y_hat = self.predict(x)
+            err = y_hat - y
 
-        self.gw += dw ** 2
-        self.gb += db ** 2
+            grad_w = 2 * err * x
+            grad_b = 2 * err
 
-        self.w -= lr * dw / (np.sqrt(self.gw) + self.eps)
-        self.b -= lr * db / (np.sqrt(self.gb) + self.eps)
+            self.gw += grad_w ** 2
+            self.gb += grad_b ** 2
 
-        return loss
+            self.w -= self.lr * grad_w / (np.sqrt(self.gw) + 1e-8)
+            self.b -= self.lr * grad_b / (math.sqrt(self.gb) + 1e-8)
 
-    def train(self, xs, y, epochs, lr):
-        loss_history = []
+            total_loss += self.loss(y_hat, y)
 
-        for epoch in range(epochs):
-            epoch_loss = 0.0
-            for x in xs:
-                epoch_loss += self.train_step(x, y, lr)
+        avg_loss = total_loss / len(dataset)
 
-            epoch_loss /= len(xs)
-            loss_history.append(epoch_loss)
+        self.loss_history.append(avg_loss)
+        self.trajectory.append({
+            "weights": self.w.tolist(),
+            "bias": self.b,
+            "loss": avg_loss
+        })
 
-            if epoch_loss < self.best_loss:
-                self.best_loss = epoch_loss
-                self.best_epoch = epoch
-                self.best_w = self.w
-                self.best_b = self.b
+        return avg_loss
 
-        return loss_history
+    # 🔹 3D Loss Surface (w0, b 기준)
+    def loss_surface(self, dataset, steps=40, span=2.0):
+        w0 = self.w[0]
+        b0 = self.b
 
-    def loss_surface(self, x_mean):
+        W = np.linspace(w0 - span, w0 + span, steps)
+        B = np.linspace(b0 - span, b0 + span, steps)
+
         surface = []
-        w_range = np.linspace(self.best_w - 1, self.best_w + 1, 20)
-        b_range = np.linspace(self.best_b - 1, self.best_b + 1, 20)
 
-        for w in w_range:
-            for b in b_range:
-                y_pred = w * x_mean + b
-                loss = (y_pred - self.best_loss) ** 2
-                surface.append({
-                    "weight": float(w),
-                    "bias": float(b),
-                    "loss": float(loss)
-                })
+        for wi in W:
+            row = []
+            for bi in B:
+                l = 0.0
+                for x, y in dataset:
+                    pred = wi * x[0] + bi
+                    l += (pred - y) ** 2
+                row.append(l / len(dataset))
+            surface.append(row)
 
-        return surface
+        return {
+            "w": W.tolist(),
+            "b": B.tolist(),
+            "loss": surface
+        }
