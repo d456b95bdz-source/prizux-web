@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>PRIZUX Deep Core Lab</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Plotly -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
@@ -14,8 +16,12 @@ body {
   color: #111;
 }
 
-h1 { font-size: 48px; }
+h1 {
+  font-size: 48px;
+  margin-bottom: 30px;
+}
 
+/* ================= Controls ================= */
 .controls {
   margin-bottom: 30px;
 }
@@ -31,15 +37,16 @@ button {
   transition: transform .15s ease, box-shadow .15s ease;
 }
 
-button:active {
-  transform: scale(0.95);
-}
-
 button.secondary {
   background: #f3f4f6;
   color: #111;
 }
 
+button:active {
+  transform: scale(0.95);
+}
+
+/* ================= Cards ================= */
 .card {
   border: 1px solid #e5e7eb;
   border-radius: 18px;
@@ -64,6 +71,7 @@ input {
   color: #666;
 }
 
+/* ================= Progress ================= */
 .progress {
   margin-top: 20px;
   height: 10px;
@@ -79,6 +87,7 @@ input {
   transition: width .4s ease;
 }
 
+/* ================= Animation ================= */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -102,16 +111,23 @@ input {
   <div class="bar" id="bar"></div>
 </div>
 
-<div id="lossChart" style="height:300px;margin-top:40px;"></div>
-<div id="loss3d" style="height:450px;margin-top:40px;"></div>
+<div id="lossChart" style="height:320px;margin-top:50px;"></div>
+<div id="loss3d" style="height:520px;margin-top:50px;"></div>
 
 <script>
-const API = "223.130.160.209:8000";
+/* =====================================================
+   API CONFIG (전용 API 도메인)
+===================================================== */
+const API = "https://api.prizux.com/api";
 
+/* =====================================================
+   State
+===================================================== */
 let xDim = 1;
-let rowCount = 0;
 
-/* ===== Row Creation ===== */
+/* =====================================================
+   Row Creation
+===================================================== */
 function createRow() {
   const row = document.createElement("div");
   row.className = "card";
@@ -119,7 +135,7 @@ function createRow() {
   for (let i = 0; i < xDim; i++) {
     const input = document.createElement("input");
     input.type = "number";
-    input.placeholder = "X" + (i+1);
+    input.placeholder = "X" + (i + 1);
     row.appendChild(input);
   }
 
@@ -134,10 +150,11 @@ function createRow() {
   row.appendChild(y);
 
   document.getElementById("rows").appendChild(row);
-  rowCount++;
 }
 
-/* ===== Add X Dimension ===== */
+/* =====================================================
+   Add X Dimension
+===================================================== */
 function addX() {
   xDim++;
 
@@ -149,12 +166,16 @@ function addX() {
   });
 }
 
-/* ===== Add Row ===== */
+/* =====================================================
+   Add Row
+===================================================== */
 function addRow() {
   createRow();
 }
 
-/* ===== Train ===== */
+/* =====================================================
+   Train
+===================================================== */
 async function train() {
   const X = [];
   const Y = [];
@@ -162,42 +183,88 @@ async function train() {
   document.querySelectorAll(".card").forEach(row => {
     const inputs = row.querySelectorAll("input");
     const xs = [];
+
     for (let i = 0; i < xDim; i++) {
-      xs.push(Number(inputs[i].value));
+      const v = Number(inputs[i].value);
+      if (isNaN(v)) return;
+      xs.push(v);
     }
+
+    const yv = Number(inputs[xDim].value);
+    if (isNaN(yv)) return;
+
     X.push(xs);
-    Y.push(Number(inputs[xDim].value));
+    Y.push(yv);
   });
 
-  const bar = document.getElementById("bar");
-  bar.style.width = "20%";
+  if (X.length === 0) {
+    alert("No valid data.");
+    return;
+  }
 
-  const res = await fetch(API + "/api/train", {
+  const bar = document.getElementById("bar");
+  bar.style.width = "15%";
+
+  const res = await fetch(API + "/train", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ X, Y })
   });
 
+  if (!res.ok) {
+    alert("Training failed");
+    return;
+  }
+
   const data = await res.json();
   bar.style.width = "100%";
 
+  /* ================= Loss Curve ================= */
   Plotly.newPlot("lossChart", [{
     y: data.loss_history,
     type: "scatter",
-    line: { color: "#4F46E5" }
-  }]);
+    mode: "lines",
+    line: { color: "#4F46E5", width: 3 }
+  }], {
+    title: "Loss per Epoch",
+    margin: { t: 40 },
+    xaxis: { title: "Epoch" },
+    yaxis: { title: "Loss" }
+  });
 
-  Plotly.newPlot("loss3d", [{
-    x: data.trajectory.map(t => t.w),
-    y: data.trajectory.map(t => t.b),
-    z: data.trajectory.map(t => t.loss),
-    mode: "lines+markers",
-    type: "scatter3d",
-    marker: { size: 3 }
-  }]);
+  /* ================= 3D Loss Landscape ================= */
+  Plotly.newPlot("loss3d", [
+    {
+      x: data.surface.w_grid,
+      y: data.surface.b_grid,
+      z: data.surface.loss_grid,
+      type: "surface",
+      colorscale: "RdYlGn",
+      opacity: 0.9
+    },
+    {
+      x: data.trajectory.map(p => p.w),
+      y: data.trajectory.map(p => p.b),
+      z: data.trajectory.map(p => p.loss),
+      type: "scatter3d",
+      mode: "lines+markers",
+      line: { color: "#000", width: 4 },
+      marker: { size: 3, color: "#000" }
+    }
+  ], {
+    title: "Loss Landscape & Optimization Path",
+    scene: {
+      xaxis: { title: "Weight" },
+      yaxis: { title: "Bias" },
+      zaxis: { title: "Loss" }
+    },
+    margin: { t: 50 }
+  });
 }
 
-/* initial row */
+/* =====================================================
+   Init
+===================================================== */
 createRow();
 </script>
 
